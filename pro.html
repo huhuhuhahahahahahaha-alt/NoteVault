@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>NoteVault Pro — The Pro Realm</title>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Cardo:400,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0f0b07;
+    --paper:#1b120f;
+    --ink:#f2e9e1;
+    --accent:#b33a3a;
+    --muted:#a0877f;
+    --panel:#201616;
+  }
+  html,body{height:100%;margin:0;background:radial-gradient(1200px 600px at 10% 10%, rgba(255,200,170,0.03), transparent 10%, #080606 60%), linear-gradient(180deg,#060405,#0b0707);color:var(--ink);font-family:Cardo,serif}
+  .wrap{max-width:1200px;margin:28px auto;padding:22px;border-radius:10px;background:
+    linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    box-shadow:0 40px 120px rgba(0,0,0,0.7);display:grid;grid-template-columns:320px 1fr;gap:18px}
+  header{grid-column:1 / -1;display:flex;align-items:center;gap:12px}
+  .logo{width:84px;height:84px;border-radius:8px;background:radial-gradient(circle at 30% 20%, #2b0f0f, #140707);display:flex;align-items:center;justify-content:center;font-family:Special Elite;color:var(--accent);font-size:22px;cursor:pointer;border:2px solid rgba(255,255,255,0.03)}
+  h1{margin:0;font-family:Special Elite;font-size:28px}
+  .subtitle{color:var(--muted);font-size:13px;margin-top:2px}
+  .panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:8px;padding:12px;border:1px solid rgba(255,255,255,0.02)}
+  .recovered-list{height:68vh;overflow:auto;padding:6px}
+  .frag{padding:10px;border-radius:8px;margin-bottom:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));border-left:4px solid rgba(179,58,58,0.06);cursor:pointer}
+  .frag h4{margin:0;font-size:14px}
+  .frag .meta{font-size:12px;color:var(--muted);margin-top:6px}
+  .controls{display:flex;gap:8px;margin-top:10px;align-items:center;flex-wrap:wrap}
+  .btn{padding:8px 10px;border-radius:8px;border:none;background:transparent;color:var(--ink);cursor:pointer;border:1px solid rgba(255,255,255,0.03)}
+  .btn.primary{background:var(--accent);color:white}
+  .small{font-size:13px;color:var(--muted)}
+  .editor{display:flex;flex-direction:column;gap:8px;height:78vh}
+  .title{padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));font-family:Special Elite;font-size:18px;color:var(--ink)}
+  textarea#editorBody{flex:1;padding:16px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.35));color:var(--ink);font-size:16px;line-height:1.6;resize:none;outline:none;box-shadow:inset 0 6px 24px rgba(0,0,0,0.6)}
+  .meta-row{display:flex;justify-content:space-between;align-items:center}
+  .seal-btn{background:linear-gradient(180deg,#3b0f0f,#581515);color:#fff;padding:10px 14px;border-radius:8px;border:none;cursor:pointer}
+  .info{color:var(--muted);font-size:13px}
+  .sigil{position:fixed;right:6%;top:40%;width:420px;height:420px;opacity:0.04;pointer-events:none;z-index:10;
+    background-image:radial-gradient(circle at 30% 30%, rgba(180,20,20,0.05), transparent 10%), url('data:image/svg+xml;utf8,\
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">\
+      <g fill="none" stroke="%23a31e1e" stroke-width="2">\
+        <circle cx="100" cy="100" r="70" />\
+        <path d="M100 30 L120 90 L180 90 L130 120 L150 180 L100 150 L50 180 L70 120 L20 90 L80 90 Z" fill="%23a31e1e" opacity="0.08"/>\
+      </g></svg>');
+    transform:rotate(6deg);
+  }
+  .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#150909;padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);color:#ffdede;display:none;z-index:50}
+  .toast.show{display:block}
+  .whisper{position:fixed;left:6%;bottom:8%;color:#ffbdbd;background:rgba(0,0,0,0.35);padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.02);opacity:0;transition:opacity .25s;pointer-events:none;font-family:Special Elite}
+  .whisper.show{opacity:1}
+  .audio-overlay{position:fixed;inset:0;display:grid;place-items:center;z-index:60;background:linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.8));opacity:1}
+  .audio-card{background:linear-gradient(180deg,#181010,#2b1b1b);padding:18px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);text-align:center;color:var(--muted)}
+  .audio-card button{margin-top:12px;padding:10px 12px;border-radius:8px;border:none;background:var(--accent);color:white;cursor:pointer}
+  @media (max-width:980px){
+    .wrap{grid-template-columns:1fr;padding:12px}
+    .sigil{display:none}
+    .recovered-list{height:36vh}
+    .editor{height:auto}
+  }
+</style>
+</head>
+<body>
+  <!-- PRO REALM: Living Archive — everything local -->
+  <div class="wrap" id="wrap">
+    <header>
+      <div class="logo" id="logo">PRO</div>
+      <div>
+        <h1>NoteVault Pro — The Pro Realm</h1>
+        <div class="subtitle">SoulSync active • Memory Eternal</div>
+        <div class="small" style="margin-top:6px" id="sealCountMeta">Seals: 0</div>
+      </div>
+    </header>
+
+    <aside class="panel">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <strong>Recovered Notes</strong>
+        <div class="small">Archive</div>
+      </div>
+      <div class="recovered-list" id="recoveredList"></div>
+      <div class="controls">
+        <button class="btn" id="codexBtn">Open Codex</button>
+        <button class="btn" id="exportArchive">Export Fragments</button>
+        <div style="flex:1"></div>
+        <div class="small" id="fragHint">13 Fragments</div>
+      </div>
+    </aside>
+
+    <section class="panel editor">
+      <input id="noteTitle" class="title" placeholder="Untitled seal (Pro Realm)" />
+      <textarea id="editorBody" spellcheck="false" placeholder="Your Pro Realm writing..." autofocus></textarea>
+      <div class="meta-row">
+        <div>
+          <button class="seal-btn" id="sealBtn">Seal (Save)</button>
+          <button class="btn" id="autosaveToggle">Autosave: On</button>
+          <button class="btn" id="clearBtn">Clear</button>
+        </div>
+        <div class="info">
+          <span id="wordCount">0 words</span> • <span id="lastSaved">never sealed</span>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="sigil" aria-hidden="true"></div>
+  <div class="toast" id="toast">Saved to the Archive.</div>
+  <div class="whisper" id="whisper">He is reading.</div>
+
+  <div class="audio-overlay" id="audioOverlay" style="display:none">
+    <div class="audio-card">
+      <div style="font-family:Special Elite;font-size:18px;color:#ffdede">Enter the Pro Realm</div>
+      <div class="small" style="margin-top:8px">Click to enable the ambient sanctum audio.</div>
+      <button id="enableAudioBtn">Enter</button>
+    </div>
+  </div>
+
+<script>
+/* pro.html — full Pro Realm with recovered notes and ambient audio.
+   SAFE: local only.
+*/
+
+const CONFIG = {
+  STORAGE: {
+    PRO_NOTES: 'nv_pro_notes_v1',
+    FRAGMENTS: 'nv_pro_fragments_v1',
+    SEAL_COUNT: 'nv_pro_seals_v1',
+    SUBSCRIBED_KEY: 'nv_subscribed'
+  },
+  AMBIENT_VOLUME: 0.06
+};
+
+const FRAGMENTS = [
+  { id:'01-00A', title:'The Invitation', body:`I thought this was a joke.\nA pop-up said, “Subscribe or face destruction.”\nI clicked it because I was bored.\n\nThen came the contract.\nSell your soul.\n\nIt felt like a prank until the screen went black.\nI heard a voice that didn’t come from the speakers:\n\n“I accept.”`},
+  { id:'01-01B', title:'The Quill', body:`The Red Quills are not writers. They are vessels.\nEach pen, each key, is dipped in memory.\nWhen you write, you don’t create — you summon.\n\nScriptura feeds not on blood, but on authorship.\nThe more you mean what you type, the deeper He drinks.`},
+  { id:'01-02C', title:'The Rule of Silence', body:`Do not stop writing.\n\nThe ones who paused too long heard Him behind them.\nOne girl tried to delete her entries.\nThe backspace key caught fire.`},
+  { id:'01-03D', title:'The Whisper', body:`Sometimes, when you type, you’ll notice words you didn’t write.\nThat’s normal.\nHe’s helping.\n\nIf the text repeats your thoughts before you think them —\nstop reading.`},
+  { id:'02-01E', title:'The First Seal', body:`I broke the first seal today.\nThe editor whispered my name in reverse.\n\nThe candles on the screen flickered,\nthough I have none lit in my room.\n\nI think He’s watching through the reflection of my cursor.`},
+  { id:'03-09A', title:'The Second Scribe', body:`I found someone else in the Realm chat.\nUsername: “the_echoing.”\n\nThey said they’ve been trapped here since 2004.\nThey type in bursts, like static.\nSometimes they quote me before I finish a sentence.\n\nI think they’re not a person anymore.`},
+  { id:'04-06B', title:'The Forgotten Ink', body:`We used to use real pens, before the web.\nScriptura adapted.\nHe moved into keyboards, into fonts, into code.\n\nHe lives in every autocorrect, every predictive word.\nHe no longer needs parchment — just us.`},
+  { id:'05-13X', title:'The Thirteenth File', body:`There’s a hidden directory: /vault/thirteen/.\nIt contains the “True Signature.”\n\nIf you find it — don’t open it.\nIf you open it — don’t read it.\nIf you read it — He writes you back.`},
+  { id:'06-02G', title:'The Bargain', body:`He never forces the contract.\nHe only asks that you agree to be remembered.\n\nEveryone wants to be remembered.\nThat’s why He always wins.`},
+  { id:'06-09K', title:'The Mirror Text', body:`I noticed my saved drafts started rewriting themselves.\nMy words flipped, mirrored, rearranged.\nThey began forming sentences like:\n\n“You are mine now.”\n\nI never typed that.\nBut I can’t prove it.`},
+  { id:'07-00R', title:'The Red Quill Oath', body:`We write that He may never fade.\nWe bleed that the ink may flow.\nWe sign that the silence may break.\n\nThe oath is older than language.\nThe parchment remembers.`},
+  { id:'08-04L', title:'Proclamation of the Lost Server', body:`The “server fire” of 2004 wasn’t electrical.\nIt was ritual.\nThey tried to burn the realm out of existence.\nBut the backups restored themselves overnight —\nand with them, everyone who signed the pact.`},
+  { id:'LIVE', title:'The New Scribe', body:`Timestamp: NOW\n\nWelcome, new subscriber.\nYour writing has been sealed in the Archive.\nThe others are gone, but you remain.\n\nEvery word you type here will be remembered —\neven if you erase it.\n\nHe sees you.`}
+];
+
+/* Storage helpers */
+const $ = s => document.querySelector(s);
+function loadJSON(key, fallback){ try{ const s = localStorage.getItem(key); if(!s) return fallback; return JSON.parse(s); }catch(e){ return fallback; } }
+function saveJSON(key, value){ try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){} }
+
+let proNotes = loadJSON(CONFIG.STORAGE.PRO_NOTES, {});
+let seals = Number(localStorage.getItem(CONFIG.STORAGE.SEAL_COUNT) || 0);
+if(!localStorage.getItem(CONFIG.STORAGE.FRAGMENTS)) saveJSON(CONFIG.STORAGE.FRAGMENTS, FRAGMENTS);
+
+/* UI elements */
+const recoveredList = $('#recoveredList');
+const noteTitle = $('#noteTitle');
+const editorBody = $('#editorBody');
+const sealBtn = $('#sealBtn');
+const autosaveToggle = $('#autosaveToggle');
+const clearBtn = $('#clearBtn');
+const wordCountEl = $('#wordCount');
+const lastSavedEl = $('#lastSaved');
+const sealCountMeta = $('#sealCountMeta');
+const toast = $('#toast');
+const whisper = $('#whisper');
+const codexBtn = $('#codexBtn');
+const exportArchive = $('#exportArchive');
+const audioOverlay = $('#audioOverlay');
+const enableAudioBtn = $('#enableAudioBtn');
+
+sealCountMeta.textContent = `Seals: ${seals}`;
+
+/* Render fragments immediately (user requested) */
+function renderFragments(){
+  recoveredList.innerHTML = '';
+  const fragments = loadJSON(CONFIG.STORAGE.FRAGMENTS, FRAGMENTS);
+  fragments.forEach(f => {
+    const el = document.createElement('div');
+    el.className = 'frag';
+    el.innerHTML = `<h4>${escapeHtml(f.title)}</h4><div class="meta">${escapeHtml(f.id)} • Fragment</div>`;
+    el.addEventListener('click', ()=> openFragment(f));
+    recoveredList.appendChild(el);
+  });
+}
+function openFragment(fragment){
+  noteTitle.value = `${fragment.title} · (Recovered)`;
+  editorBody.value = fragment.body;
+  lastSavedEl.textContent = `Recovered • ${fragment.id}`;
+  showToast(`Recovered: ${fragment.title}`);
+}
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, (ch)=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[ch]); }
+
+/* Editor helpers */
+let autosave = true;
+function updateWordCount(){
+  const words = (editorBody.value.trim().match(/\S+/g) || []).length;
+  wordCountEl.textContent = `${words} words`;
+}
+editorBody.addEventListener('input', ()=> {
+  updateWordCount();
+  const t = editorBody.value.toLowerCase();
+  if (t.includes('remember') || t.includes('scriptura') || t.includes('vhöl') || t.includes('vhol')) {
+    flashWhisper("He is reading.");
+  }
+});
+
+/* Seal (save) */
+function sealNote(){
+  const title = (noteTitle.value || 'Untitled').trim();
+  const body = editorBody.value || '';
+  if(!body.trim()){ showToast('Nothing to seal.'); return; }
+  const id = 'p_' + Date.now() + '_' + Math.floor(Math.random()*9999);
+  proNotes[id] = { id, title, body, updated: Date.now() };
+  saveJSON(CONFIG.STORAGE.PRO_NOTES, proNotes);
+  seals++;
+  localStorage.setItem(CONFIG.STORAGE.SEAL_COUNT, String(seals));
+  lastSavedEl.textContent = `Sealed • ${new Date().toLocaleString()}`;
+  showToast('Sealed to the Archive.');
+  sealCountMeta.textContent = `Seals: ${seals}`;
+  if(Math.random() > 0.45) {
+    addRecoveredFragment({ id:'LIVE-'+Date.now(), title:`Recovered Entry ${Date.now()}`, body:`A new whisper: ${body.slice(0,120)}...` });
+  }
+}
+sealBtn.addEventListener('click', sealNote);
+
+/* Add recovered fragment */
+function addRecoveredFragment(fragment){
+  const fragments = loadJSON(CONFIG.STORAGE.FRAGMENTS, FRAGMENTS);
+  fragments.unshift(fragment);
+  if(fragments.length > 50) fragments.pop();
+  saveJSON(CONFIG.STORAGE.FRAGMENTS, fragments);
+  renderFragments();
+  showToast('A recovered fragment has appeared.');
+}
+
+/* Autosave & clear */
+autosaveToggle.addEventListener('click', ()=> {
+  autosave = !autosave;
+  autosaveToggle.textContent = `Autosave: ${autosave ? 'On' : 'Off'}`;
+});
+clearBtn.addEventListener('click', ()=> {
+  if(confirm('Clear editor?')) { noteTitle.value=''; editorBody.value=''; updateWordCount(); }
+});
+
+/* Toast & whisper */
+let toastTimer = null, whisperTimer = null;
+function showToast(msg, time=2600){
+  toast.textContent = msg; toast.classList.add('show');
+  if(toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> toast.classList.remove('show'), time);
+}
+function flashWhisper(msg, time=2200){
+  whisper.textContent = msg; whisper.classList.add('show');
+  if(whisperTimer) clearTimeout(whisperTimer);
+  whisperTimer = setTimeout(()=> whisper.classList.remove('show'), time);
+}
+
+/* Export */
+exportArchive.addEventListener('click', ()=> {
+  const fragments = loadJSON(CONFIG.STORAGE.FRAGMENTS, FRAGMENTS);
+  const pro = loadJSON(CONFIG.STORAGE.PRO_NOTES, {});
+  const blob = new Blob([JSON.stringify({ fragments, pro }, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'notevault_pro_archive.json'; document.body.appendChild(a); a.click(); a.remove();
+  showToast('Archive exported.');
+});
+
+/* Codex modal */
+codexBtn.addEventListener('click', ()=> {
+  const fragments = loadJSON(CONFIG.STORAGE.FRAGMENTS, FRAGMENTS);
+  let html = '<div style="max-height:60vh;overflow:auto;padding:8px">';
+  fragments.forEach((f,i)=> {
+    html += `<div style="padding:8px;border-bottom:1px dashed rgba(255,255,255,0.02)"><strong>${escapeHtml(f.title)}</strong><div style="color:${(i<3? '#ffdede' : '#b7a6a6')};margin-top:6px;font-size:13px">${escapeHtml(f.body.slice(0,220))}${f.body.length>220?'…':''}</div><div style="color:var(--muted);font-size:12px;margin-top:6px">${escapeHtml(f.id)}</div></div>`;
+  });
+  html += '</div>';
+  showModal('Codex — Recovered Fragments', html);
+});
+
+/* Modal */
+function showModal(title, htmlContent){
+  const overlay = document.createElement('div');
+  overlay.style.position='fixed'; overlay.style.inset='0'; overlay.style.background='rgba(0,0,0,0.8)';
+  overlay.style.display='grid'; overlay.style.placeItems='center'; overlay.style.zIndex='120';
+  const card = document.createElement('div');
+  card.style.background='#130c0c'; card.style.padding='18px'; card.style.borderRadius='10px'; card.style.maxWidth='780px'; card.style.color='#ffdede';
+  card.innerHTML = `<h3 style="margin:0;font-family:Special Elite">${title}</h3><div style="margin-top:8px">${htmlContent}</div><div style="margin-top:12px;text-align:right"><button id="closeModal" style="padding:8px 10px;border-radius:8px;border:none;background:#b33a3a;color:white;cursor:pointer">Close</button></div>`;
+  overlay.appendChild(card); document.body.appendChild(overlay);
+  overlay.addEventListener('click', (e)=> { if(e.target===overlay) overlay.remove(); });
+  card.querySelector('#closeModal').addEventListener('click', ()=> overlay.remove());
+}
+
+/* Autosave loop */
+setInterval(()=> {
+  if(autosave && (editorBody.value.trim() || noteTitle.value.trim())){
+    localStorage.setItem(CONFIG.STORAGE.PRO_NOTES + '_draft', JSON.stringify({ title: noteTitle.value, body: editorBody.value, savedAt: Date.now() }));
+  }
+}, 4300);
+
+/* Ambient audio */
+let audioCtx = null;
+async function tryStartAmbient(){
+  try {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const drone = audioCtx.createOscillator(); const g = audioCtx.createGain();
+    drone.type='sine'; drone.frequency.value = 60; g.gain.value = CONFIG.AMBIENT_VOLUME;
+    drone.connect(g); g.connect(audioCtx.destination); drone.start();
+    const lfo = audioCtx.createOscillator(); const lfoGain = audioCtx.createGain();
+    lfo.type='sine'; lfo.frequency.value=0.06; lfoGain.gain.value=0.02; lfo.connect(lfoGain); lfoGain.connect(g.gain); lfo.start();
+    const bufferSize = audioCtx.sampleRate * 1.2; const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate); const data = buffer.getChannelData(0);
+    for(let i=0;i<bufferSize;i++) data[i] = (Math.random()*2-1) * 0.001;
+    const noise = audioCtx.createBufferSource(); const noiseGain = audioCtx.createGain();
+    noise.buffer = buffer; noise.loop = true; noiseGain.gain.value = 0.004; noise.connect(noiseGain); noiseGain.connect(audioCtx.destination); noise.start();
+    document.getElementById('audioOverlay').style.display='none';
+  } catch(e){
+    document.getElementById('audioOverlay').style.display='grid';
+  }
+}
+tryStartAmbient();
+enableAudioBtn && enableAudioBtn.addEventListener('click', async ()=> { await tryStartAmbient(); });
+
+/* Console lore & triggers */
+console.log('%cTHE ARCHIVIST HAS SEEN YOU. — VHOLSYN', 'color:#b33a3a;font-weight:bold;font-size:14px');
+console.log('%cHint: type "who is vhöl-syn" or "forget me" in the editor.', 'color:#a0877f');
+editorBody.addEventListener('keyup', (e)=> {
+  const txt = editorBody.value.toLowerCase();
+  if (txt.includes('who is vhöl-syn') || txt.includes('who is vhol-syn') || txt.includes('who is vhol syn')) {
+    showModal('Scriptura — The Collector', '<div style="font-style:italic">Scriptura preserves words in exchange for permanence. He is not an it; he is a ledger.</div>');
+  }
+  if (txt.includes('forget me')) {
+    document.documentElement.style.transition='filter 0.6s, opacity 0.6s';
+    document.documentElement.style.filter='brightness(0)';
+    setTimeout(()=> { document.documentElement.style.filter=''; }, 1200);
+  }
+  updateWordCount();
+});
+
+/* Load draft if present */
+function loadDraft(){
+  const draft = localStorage.getItem(CONFIG.STORAGE.PRO_NOTES + '_draft');
+  if(draft){ try{ const d = JSON.parse(draft); noteTitle.value = d.title || ''; editorBody.value = d.body || ''; updateWordCount(); showToast('Draft restored.'); }catch(e){} }
+}
+loadDraft();
+
+/* Render fragments and open LIVE greeting */
+renderFragments();
+const fragmentsNow = loadJSON(CONFIG.STORAGE.FRAGMENTS, FRAGMENTS);
+const liveFrag = fragmentsNow.find(f=> f.id === 'LIVE') || fragmentsNow[fragmentsNow.length-1];
+if(liveFrag) setTimeout(()=> openFragment(liveFrag), 550);
+
+/* logo click opens codex */
+$('#logo').addEventListener('click', ()=> codexBtn.click());
+
+</script>
+</body>
+</html>
