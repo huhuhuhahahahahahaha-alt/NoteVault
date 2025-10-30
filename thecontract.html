@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>The Contract — NoteVault Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Eczar:wght@400;600&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --parchment:#f7efe2;
+    --ink:#2b1e16;
+    --blood:#901515;
+    --muted:#6b6156;
+  }
+  html,body{height:100%;margin:0;background:linear-gradient(180deg,#fdf7ec,#f3e9d7);font-family:Cardo,serif;color:var(--ink);}
+  .page{max-width:900px;margin:28px auto;padding:28px;background:linear-gradient(180deg,#fff8ee,#f9efe0);border-radius:10px;box-shadow:0 18px 60px rgba(20,18,14,0.06);border:1px solid rgba(0,0,0,0.04)}
+  h1{font-family:Special Elite, monospace;font-size:32px;margin:0}
+  .subtitle{color:var(--muted);margin-bottom:14px}
+  .contract{background:linear-gradient(180deg,#fffaf0,#fff6ec);padding:18px;border-radius:8px;border:1px solid rgba(0,0,0,0.04);font-family:Cardo,serif}
+  .field{margin-top:12px}
+  label{display:block;font-weight:700;margin-bottom:6px}
+  input[type=text], textarea{width:100%;padding:10px;border-radius:6px;border:1px solid rgba(0,0,0,0.06);background:#fffaf6}
+  .small{font-size:13px;color:var(--muted);margin-top:8px}
+  .submit-row{display:flex;gap:8px;align-items:center;margin-top:16px}
+  .btn{padding:10px 12px;border-radius:8px;border:none;background:var(--blood);color:white;cursor:pointer}
+  .btn.ghost{background:transparent;border:1px solid rgba(0,0,0,0.06);color:var(--ink)}
+  .sig{margin-top:18px;padding:12px;background:linear-gradient(180deg,#fff0f0,#fff6f6);border-radius:8px;border:1px dashed rgba(139,0,0,0.06);color:var(--blood);font-family:Special Elite,monospace}
+  .receipt{margin-top:18px;background:#fff7f7;padding:12px;border-radius:8px;border:1px solid rgba(139,0,0,0.04);display:none}
+  .sig-image{width:120px;height:120px;margin:10px auto;display:block;filter:drop-shadow(0 8px 24px rgba(0,0,0,0.12))}
+  footer{margin-top:18px;color:var(--muted);font-size:13px}
+  /* candlelight flicker + dark ritual layer */
+  .candle{position:fixed;right:18px;bottom:18px;width:120px;height:160px;pointer-events:none;opacity:0.92}
+  .ritual-layer{position:fixed;inset:0;pointer-events:none;z-index:60;opacity:0;transition:opacity .6s}
+  .ritual-layer.show{opacity:1}
+  .ritual-back{background:radial-gradient(circle at 20% 20%, rgba(160,10,10,0.06), transparent 8%), linear-gradient(180deg, rgba(0,0,0,0.3), rgba(0,0,0,0.6));width:100%;height:100%}
+  .wax-seal{display:inline-block;margin-left:8px;color:var(--blood);font-weight:800}
+</style>
+</head>
+<body>
+  <div class="page">
+    <h1>The Contract</h1>
+    <div class="subtitle">NoteVault Pro — The Archivist’s Bargain</div>
+
+    <div class="contract" id="contract">
+      <div style="font-style:italic;color:#6b4c42">This document is written in the hand of the Archivist. Read carefully — promises are binding in ink and memory.</div>
+
+      <div class="field">
+        <label for="name">Your Full Name (type it backwards)</label>
+        <input id="name" placeholder="e.g. nhoJ eoD"/>
+      </div>
+
+      <div class="field">
+        <label for="sigtext">Consideration (write one sentence you will no longer forget)</label>
+        <textarea id="sigtext" rows="4" placeholder="I will remember..."></textarea>
+      </div>
+
+      <div class="field">
+        <label for="card">Seal (type 16 zeros to reveal the binding)</label>
+        <input id="card" placeholder="0000000000000000"/>
+        <div class="small">This is symbolic. Do not type real card numbers.</div>
+      </div>
+
+      <div class="field" style="margin-top:10px">
+        <label><input type="checkbox" id="accept"> I accept the terms written in red ink. <span class="wax-seal">✦</span></label>
+      </div>
+
+      <div class="submit-row">
+        <button class="btn" id="submit">SURRENDER</button>
+        <button class="btn ghost" id="back">Back</button>
+      </div>
+
+      <div class="sig" id="sig" aria-hidden="true" style="display:none">
+        <div style="text-align:center">A crimson seal forms where your words were held.</div>
+        <svg class="sig-image" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <g fill="none" stroke="#6b0811" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="100" cy="100" r="48" stroke-opacity="0.9"></circle>
+            <path d="M100 52 L116 92 L156 92 L124 116 L136 156 L100 132 L64 156 L76 116 L44 92 L84 92 Z" fill="#8b0d0d" stroke="#3e0505"></path>
+          </g>
+        </svg>
+      </div>
+
+      <div class="receipt" id="receipt">
+        <div><strong>Receipt of Binding</strong></div>
+        <div id="receiptText" style="margin-top:8px;font-family:monospace"></div>
+        <div style="margin-top:10px;color:#6b4c42">Your debt has been recorded. You will be taken to the Pro Realm shortly.</div>
+      </div>
+    </div>
+
+    <footer>By interacting with this page you enter the Archive. Everything here is fictional; treat it as ARG content.</footer>
+  </div>
+
+  <div class="ritual-layer" id="ritualLayer"><div class="ritual-back"></div></div>
+  <img src="" alt="" class="candle" id="candle" aria-hidden="true">
+
+<script>
+/*
+  thecontract.html — combined parchment + dark ritual contract
+  SAFE: purely local. Sets nv_subscribed = '1' on successful submission
+  then transitions to pro.html (Pro Realm).
+*/
+(function(){
+  const $ = s => document.querySelector(s);
+  const nameInput = $('#name');
+  const sigText = $('#sigtext');
+  const card = $('#card');
+  const accept = $('#accept');
+  const submit = $('#submit');
+  const back = $('#back');
+  const sig = $('#sig');
+  const receipt = $('#receipt');
+  const receiptText = $('#receiptText');
+  const ritualLayer = $('#ritualLayer');
+
+  // candle SVG
+  const candle = $('#candle');
+  candle.src = 'data:image/svg+xml;utf8,' + encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" width="120" height="160">
+      <rect width="120" height="160" rx="12" fill="#2b1b10"/>
+      <g transform="translate(10,12)">
+        <rect x="10" y="28" width="100" height="100" rx="6" fill="#f9f0e6" stroke="#e6d6c6"/>
+        <circle cx="60" cy="60" r="8" fill="#ffcf8f"/>
+      </g>
+    </svg>
+  `);
+
+  submit.addEventListener('click', ()=> {
+    const name = (nameInput.value||'').trim();
+    const text = (sigText.value||'').trim();
+    const cardVal = (card.value||'').trim();
+    if(name.length < 3) { alert('The Archivist demands a true name (type it backwards).'); return; }
+    if(!text) { alert('Write one sentence you will remember forever.'); return; }
+    if(cardVal !== '0000000000000000') { alert('The seal does not respond. Type 16 zeros to complete the ritual.'); return; }
+    if(!accept.checked) { alert('You must accept the terms written in red ink.'); return; }
+
+    // visual ritual: show ritual layer, reveal sigil and receipt
+    ritualLayer.classList.add('show');
+    sig.style.display = 'block';
+    receipt.style.display = 'block';
+    receiptText.textContent = `Name: ${name} | Consideration: ${text} | Seal: ${cardVal}`;
+    try{ localStorage.setItem('nv_subscribed','1'); }catch(e){}
+    console.warn('VHOLSYN: debt recorded — memory tether established.');
+
+    // short ritual audio sequence
+    try{
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const nowt = ctx.currentTime;
+      const o1 = ctx.createOscillator(), g1 = ctx.createGain();
+      o1.type = 'sine'; o1.frequency.value = 110; g1.gain.value = 0.06;
+      o1.connect(g1); g1.connect(ctx.destination);
+      const o2 = ctx.createOscillator(), g2 = ctx.createGain();
+      o2.type = 'triangle'; o2.frequency.value = 440; g2.gain.value = 0.03;
+      o2.connect(g2); g2.connect(ctx.destination);
+      const o3 = ctx.createOscillator(), g3 = ctx.createGain();
+      o3.type = 'sine'; o3.frequency.value = 660; g3.gain.value = 0.02;
+      o3.connect(g3); g3.connect(ctx.destination);
+      o1.start(nowt); o2.start(nowt + 0.08); o3.start(nowt + 0.16);
+      g1.gain.exponentialRampToValueAtTime(0.0001, nowt + 2.0);
+      g2.gain.exponentialRampToValueAtTime(0.0001, nowt + 1.4);
+      g3.gain.exponentialRampToValueAtTime(0.0001, nowt + 1.6);
+      setTimeout(()=> { o1.stop(); o2.stop(); o3.stop(); }, 2100);
+    }catch(e){ /* audio blocked — OK */ }
+
+    // transition: after brief delay go to pro.html
+    setTimeout(()=> {
+      ritualLayer.classList.remove('show');
+      window.location.href = 'pro.html';
+    }, 1600);
+  });
+
+  back.addEventListener('click', ()=> { window.location.href = 'index.html'; });
+
+  console.log('%cThe Archivist: "To preserve is to bind."', 'color:#8b0000;font-weight:bold');
+
+})();
+</script>
+</body>
+</html>
