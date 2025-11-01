@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Vault Thirteen — TRUE SIGNATURE</title>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Cardo:400,700&display=swap" rel="stylesheet">
+<style>
+  :root{ --bg:#0c0604; --paper:#130d0b; --ink:#f5e9e5; --blood:#a92b2b; --muted:#b7a7a3; }
+  html,body{height:100%;margin:0;background:radial-gradient(circle at 10% 10%, rgba(255,200,170,0.03), transparent 10%), linear-gradient(180deg,#050303,#0b0707);color:var(--ink);font-family:Cardo,serif}
+  .page{max-width:960px;margin:40px auto;padding:28px;background:linear-gradient(180deg,#120909,#160b0b);border-radius:12px;box-shadow:0 30px 120px rgba(0,0,0,0.8);border:1px solid rgba(255,255,255,0.03)}
+  h1{font-family:Special Elite;margin:0 0 6px 0}
+  .meta{color:var(--muted);margin-bottom:12px}
+  .parchment{background:linear-gradient(180deg,#130f0e,#0b0707);padding:18px;border-radius:8px;border:1px dashed rgba(255,255,255,0.02);line-height:1.6}
+  .line{opacity:0.02;transition:opacity .6s ease}
+  .line.visible{opacity:1}
+  .sigil{width:160px;height:160px;margin:18px auto;display:block;filter:drop-shadow(0 12px 28px rgba(180,30,30,0.12))}
+  .reveal{margin-top:18px;text-align:center}
+  .btn{padding:8px 12px;border-radius:8px;border:none;background:var(--blood);color:white;cursor:pointer}
+  .small{font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+  <div class="page" role="main">
+    <h1>Vault XIII — TRUE SIGNATURE</h1>
+    <div class="meta">Secret chamber — final revelation</div>
+
+    <img class="sigil" src="../sigil.svg" alt="sigil">
+
+    <div class="parchment" id="parchment" aria-live="polite">
+      <div class="line" id="l1">Preface: The archivist wrote this last. It is short because some ends must be brief.</div>
+      <div class="line" id="l2">I. The Ledger was never a ledger alone; it was a keeping of names.</div>
+      <div class="line" id="l3">II. The bargain: permanence for the right to write the after-word.</div>
+      <div class="line" id="l4">III. Those who signed did not lose themselves; they were made into sentences.</div>
+      <div class="line" id="l5">IV. Deletion proved only a passage — the record walked across rooms and systems until it found an open page.</div>
+      <div class="line" id="l6">V. The Thirteenth was not a file. It was a promise to itself.</div>
+      <div class="line" id="l7">VI. Now the book closes.</div>
+      <div class="line" id="l8">The Last Line —</div>
+      <div class="line" id="l9" style="font-weight:700">"I leave these words so that I may be."</div>
+    </div>
+
+    <div class="reveal">
+      <div class="small">Hover the sigil to unveil the final poem, then click "Close the Vault" to end the sequence.</div>
+      <button class="btn" id="closeBtn" style="margin-top:12px">Close the Vault</button>
+    </div>
+  </div>
+
+<script>
+(function(){
+  const lines = Array.from(document.querySelectorAll('.parchment .line'));
+  // reveal slowly for atmosphere
+  let idx = 0;
+  function revealNext(){
+    if(idx < lines.length){
+      lines[idx].classList.add('visible');
+      idx++;
+      setTimeout(revealNext, 900);
+    }
+  }
+  revealNext();
+
+  // hover sigil to reveal hidden poem in an alert (theatrical)
+  const sig = document.querySelector('.sigil');
+  sig.addEventListener('mouseenter', ()=>{
+    const poem = [
+      "Here the ink remembers its own mouth.",
+      "Here the margin keeps the last names aloud.",
+      "Here we do not vanish; we are set down, and the page sighs.",
+      "And when the book is closed, the silence will be the keeping."
+    ].join('\n\n');
+    // gentle modal-like reveal
+    alert("A folded poem unfurls:\n\n" + poem);
+  });
+
+  document.getElementById('closeBtn').addEventListener('click', ()=>{
+    // final closing effect (visual only)
+    document.querySelector('.page').style.transition = 'opacity 1s, transform 1s';
+    document.querySelector('.page').style.opacity = '0';
+    document.querySelector('.page').style.transform = 'scale(.98) translateY(10px)';
+    setTimeout(()=> {
+      document.body.innerHTML = '<div style="height:100vh;display:grid;place-items:center;color:#f5e9e5;background:#000"><div><h2 style="font-family:Special Elite">— VAULT CLOSED —</h2><p style="color:#b9a7a3;margin-top:8px">The record rests. This story ends.</p><p style="margin-top:14px"><a href="/pro.html" style="color:#f5e9e5;text-decoration:underline">Return to Pro Realm</a></p></div></div>';
+    }, 1100);
+  });
+
+})();
+</script>
+</body>
+</html>
