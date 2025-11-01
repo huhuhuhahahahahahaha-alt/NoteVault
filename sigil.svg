@@ -1,15 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 200 200">
-  <metadata>NoteVault ARG — Sigil — harmless metadata — version:1 — clues:V2hhdCBpcyB0aGUgbG9naWM/</metadata>
+<!--
+NoteVault ARG — Sigil v3
+Author: Rocket Productions (Monrickin)
+Purpose: Vault Marker / Demon Key
+Harmless metadata layer — encoded ARG clue.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="420" viewBox="0 0 200 200">
+
+  <!-- Hidden Lore -->
+  <metadata>
+    NoteVault Codex Fragment α3 —
+    “When the thirteenth circle cracked, ink became flesh.”
+    Timestamp: 11.01.25
+    Origin: /vault/lorebook.html
+    LayerCode: RGVtb25zIGFyZSBub3QgdG8gYmUgZmVhcmVkLCBidXQgdW5kZXJzdG9vZC4=
+    Checksum: 666-AEON-VAULT
+    Contact: null@monrickin.vlt
+  </metadata>
+
   <defs>
-    <radialGradient id="g" cx="30%" cy="30%">
-      <stop offset="0%" stop-color="#ffdede" stop-opacity="0.12"/>
-      <stop offset="100%" stop-color="#8b0d0d" stop-opacity="0.06"/>
+    <radialGradient id="sigilGlow" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#ff2a2a" stop-opacity="0.6"/>
+      <stop offset="70%" stop-color="#380000" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
     </radialGradient>
+    <filter id="blurGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2.5"/>
+    </filter>
   </defs>
-  <rect width="100%" height="100%" fill="black"/>
-  <g transform="translate(100,100)" fill="none" stroke="#c33" stroke-width="3">
-    <circle r="70" stroke-opacity="0.9"/>
-    <path d="M0 -70 L20 -10 L70 -10 L30 20 L50 70 L0 40 L-50 70 L-30 20 L-70 -10 L-20 -10 Z" fill="#8b0d0d" opacity="0.12"/>
+
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="url(#sigilGlow)"/>
+
+  <!-- Core Symbol -->
+  <g transform="translate(100,100)">
+    <!-- Outer Circle -->
+    <circle r="80" fill="none" stroke="#ff2a2a" stroke-width="2" stroke-opacity="0.8"/>
+
+    <!-- Inner Runes -->
+    <g stroke="#8b0d0d" stroke-width="1.5" fill="none">
+      <path d="M0 -70 L22 -22 L70 -22 L30 10 L48 65 L0 38 L-48 65 L-30 10 L-70 -22 L-22 -22 Z" opacity="0.5"/>
+      <path d="M-40 -10 Q0 -60 40 -10 T-40 -10 Z" opacity="0.25"/>
+    </g>
+
+    <!-- Central Glyph -->
+    <circle r="6" fill="#ff4444" filter="url(#blurGlow)"/>
+    <path d="M-4 -4 L4 4 M4 -4 L-4 4" stroke="#ffaaaa" stroke-width="1"/>
+
+    <!-- Orbiting Sigils -->
+    <g stroke="#ff6666" stroke-width="0.8" opacity="0.7">
+      <circle r="100" stroke-dasharray="3 6"/>
+      <circle r="120" stroke-dasharray="5 10" transform="rotate(22)"/>
+    </g>
+
+    <!-- Rotating Text (Encoded) -->
+    <text text-anchor="middle" fill="#ffaaaa" font-size="4" opacity="0.6">
+      <textPath href="#orbitPath">
+        ᚱ ᛞ ᚷ — XIII VAULT — THE NAME IS IN THE INK — ᚾ ᚨ ᛋ
+      </textPath>
+    </text>
   </g>
+
+  <!-- Hidden Layer of Runes (faint, almost invisible) -->
+  <g font-size="3" fill="#440000" opacity="0.2" transform="translate(100,100)">
+    <text x="-70" y="20">ᚱᚨᚲᛖᚾ — SEVEN KEYS BENEATH BLOOD</text>
+    <text x="-40" y="45">“The mirror remembers.”</text>
+    <text x="-60" y="-60">In quiet ink, they sleep.</text>
+  </g>
+
+  <!-- Subtle pulse animation -->
+  <animateTransform
+    attributeName="transform"
+    attributeType="XML"
+    type="rotate"
+    from="0 100 100"
+    to="360 100 100"
+    dur="120s"
+    repeatCount="indefinite"/>
+
 </svg>
