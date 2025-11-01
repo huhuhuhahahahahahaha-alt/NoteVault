@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Codex Tenebris</title>
+<style>
+html,body{
+  margin:0;padding:0;
+  background:#0b0a08 url('https://www.transparenttextures.com/patterns/papyrus-dark.png');
+  color:#e6d4a5;
+  font-family:'Cinzel',serif;
+  overflow-x:hidden;
+}
+h1,h2{ text-align:center; letter-spacing:2px; }
+section{ max-width:800px; margin:60px auto; opacity:0; transform:translateY(30px);
+  animation:reveal 2s forwards; }
+section:nth-of-type(1){animation-delay:2s;}
+section:nth-of-type(2){animation-delay:6s;}
+section:nth-of-type(3){animation-delay:10s;}
+section:nth-of-type(4){animation-delay:14s;}
+section:nth-of-type(5){animation-delay:18s;}
+section:nth-of-type(6){animation-delay:22s;}
+section:nth-of-type(7){animation-delay:26s;}
+section:nth-of-type(8){animation-delay:30s;}
+section:nth-of-type(9){animation-delay:34s;}
+section:nth-of-type(10){animation-delay:38s;}
+section:nth-of-type(11){animation-delay:42s;}
+section:nth-of-type(12){animation-delay:46s;}
+section:nth-of-type(13){animation-delay:50s;}
+
+@keyframes reveal{
+  to{opacity:1;transform:none;}
+}
+
+p{line-height:1.6em;font-size:1.05em;}
+em{color:#c9b177;}
+.sig{display:block;text-align:center;font-size:2em;color:#a23c2b;}
+#close{
+  display:block;text-align:center;margin:80px auto 40px;
+  color:#b4a47f;text-decoration:none;border:1px solid #b4a47f;
+  padding:10px 25px;border-radius:6px;transition:background .3s;
+}
+#close:hover{background:#b4a47f;color:#201c15;}
+
+@keyframes flicker{
+  0%,100%{opacity:.97;}
+  50%{opacity:.85;}
+}
+body::after{
+  content:"";
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  background:radial-gradient(circle at 50% 30%,rgba(255,225,150,0.08),transparent 70%);
+  animation:flicker 1.2s infinite;
+  pointer-events:none;
+}
+</style>
+</head>
+<body>
+
+<h1>Codex Tenebris</h1>
+<h2>The Thirteen of the Inkless Flame</h2>
+
+<section>
+<h3>I. Scriptorium – The Binder of Meaning</h3>
+<p><em>"He carved sense into sound."</em></p>
+<p>Domain: Language and definition. Symbol: A serpent devouring its own tongue. He is the reason things mean something at all. Liars choke; poets burn.</p>
+</section>
+
+<section>
+<h3>II. Caligra – The Mother of Shadows</h3>
+<p><em>"She was the first silhouette — the memory of what light forgot."</em></p>
+<p>Domain: Form and reflection. Every copy loses something of the original.</p>
+</section>
+
+<section>
+<h3>III. Vocira – The Whispering Ember</h3>
+<p><em>"She breathes between thoughts."</em></p>
+<p>Domain: Inspiration and madness. Offers brilliance at the price of sleep.</p>
+</section>
+
+<section>
+<h3>IV. Thassun – The Mirror Without Glass</h3>
+<p><em>"He reflects what never existed."</em></p>
+<p>Domain: False memory and dream logic. The reflection answers honestly, then forgets you.</p>
+</section>
+
+<section>
+<h3>V. Elgareth – The Feathered Judge</h3>
+<p><em>"Every sin weighs a word."</em></p>
+<p>Domain: Judgment and balance. Those who speak unjustly lose the ability to write.</p>
+</section>
+
+<section>
+<h3>VI. Arkenveil – The Keeper of Quiet Flame</h3>
+<p><em>"She lights no room — only memory."</em></p>
+<p>Domain: Death’s recollection. Those who call her see their ancestors for one breath.</p>
+</section>
+
+<section>
+<h3>VII. Scriptura – The Ink That Remembers</h3>
+<p><em>"Her name was never meant to be written twice."</em></p>
+<p>Domain: Preservation and repetition. Every time her name is written, she remembers the author.</p>
+</section>
+
+<section>
+<h3>VIII. Mordain – The Contract of Flesh</h3>
+<p><em>"He binds what gods abandon."</em></p>
+<p>Domain: Pacts and oaths. Those who swear falsely hear his claws scratching paper forever.</p>
+</section>
+
+<section>
+<h3>IX. Lethrae – The Dream Eater</h3>
+<p><em>"She walks the border between sleep and drowning."</em></p>
+<p>Domain: Dream and illusion. All who wake forget her; she remembers all who sleep.</p>
+</section>
+
+<section>
+<h3>X. Othrin – The Mouthless Serpent</h3>
+<p><em>"He devoured his own voice to silence the stars."</em></p>
+<p>Domain: Secrets and earthly silence. When he moves, earthquakes whisper forgotten prayers.</p>
+</section>
+
+<section>
+<h3>XI. Malpheor – The Weaver of Ends</h3>
+<p><em>"Every destiny is a thread, every death a knot."</em></p>
+<p>Domain: Fate and entropy. He can weave endings but not beginnings.</p>
+</section>
+
+<section>
+<h3>XII. Viraen – The Crimson Voice</h3>
+<p><em>"He sings in the heartbeat before fear."</em></p>
+<p>Domain: Emotion and instinct. Those who hear his hum gain courage once — and never again.</p>
+</section>
+
+<section>
+<h3>XIII. The Nameless One</h3>
+<p><em>"The Thirteenth was silence itself. Every story ends with it."</em></p>
+<p>Domain: Closure. Where its name is spoken, ink dries, stories end, and memory dies.</p>
+<span class="sig">⸸</span>
+</section>
+
+<a id="close" href="../thirteen/index.html">Close the Codex</a>
+
+</body>
+</html>
