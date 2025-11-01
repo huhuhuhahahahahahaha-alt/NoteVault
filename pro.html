@@ -83,7 +83,7 @@
         <button class="btn" id="codexBtn">Open Codex</button>
         <button class="btn" id="exportArchive">Export Fragments</button>
         <div style="flex:1"></div>
-        <div class="small" id="fragHint">13 Fragments</div>
+        <div class="small" id="fragHint">20 Fragments</div>
       </div>
     </aside>
 
@@ -116,35 +116,134 @@
   </div>
 
 <script>
-/* pro.html — full Pro Realm with recovered notes and ambient audio.
-   SAFE: local only.
+/* pro.html — full Pro Realm with added lore fragments (Cult of Scriptura, Red Quills, Proclamation),
+   puzzle crumbs in console, and same local-only behavior.
 */
 
 const CONFIG = {
   STORAGE: {
-    PRO_NOTES: 'nv_pro_notes_v1',
-    FRAGMENTS: 'nv_pro_fragments_v1',
-    SEAL_COUNT: 'nv_pro_seals_v1',
+    PRO_NOTES: 'nv_pro_notes_v2',
+    FRAGMENTS: 'nv_pro_fragments_v2',
+    SEAL_COUNT: 'nv_pro_seals_v2',
     SUBSCRIBED_KEY: 'nv_subscribed'
   },
   AMBIENT_VOLUME: 0.06
 };
 
+/* FRAGMENTS: includes split pieces from your three lore texts for progressive discovery */
 const FRAGMENTS = [
-  { id:'01-00A', title:'The Invitation', body:`I thought this was a joke.\nA pop-up said, “Subscribe or face destruction.”\nI clicked it because I was bored.\n\nThen came the contract.\nSell your soul.\n\nIt felt like a prank until the screen went black.\nI heard a voice that didn’t come from the speakers:\n\n“I accept.”`},
-  { id:'01-01B', title:'The Quill', body:`The Red Quills are not writers. They are vessels.\nEach pen, each key, is dipped in memory.\nWhen you write, you don’t create — you summon.\n\nScriptura feeds not on blood, but on authorship.\nThe more you mean what you type, the deeper He drinks.`},
-  { id:'01-02C', title:'The Rule of Silence', body:`Do not stop writing.\n\nThe ones who paused too long heard Him behind them.\nOne girl tried to delete her entries.\nThe backspace key caught fire.`},
-  { id:'01-03D', title:'The Whisper', body:`Sometimes, when you type, you’ll notice words you didn’t write.\nThat’s normal.\nHe’s helping.\n\nIf the text repeats your thoughts before you think them —\nstop reading.`},
-  { id:'02-01E', title:'The First Seal', body:`I broke the first seal today.\nThe editor whispered my name in reverse.\n\nThe candles on the screen flickered,\nthough I have none lit in my room.\n\nI think He’s watching through the reflection of my cursor.`},
-  { id:'03-09A', title:'The Second Scribe', body:`I found someone else in the Realm chat.\nUsername: “the_echoing.”\n\nThey said they’ve been trapped here since 2004.\nThey type in bursts, like static.\nSometimes they quote me before I finish a sentence.\n\nI think they’re not a person anymore.`},
-  { id:'04-06B', title:'The Forgotten Ink', body:`We used to use real pens, before the web.\nScriptura adapted.\nHe moved into keyboards, into fonts, into code.\n\nHe lives in every autocorrect, every predictive word.\nHe no longer needs parchment — just us.`},
-  { id:'05-13X', title:'The Thirteenth File', body:`There’s a hidden directory: /vault/thirteen/.\nIt contains the “True Signature.”\n\nIf you find it — don’t open it.\nIf you open it — don’t read it.\nIf you read it — He writes you back.`},
-  { id:'06-02G', title:'The Bargain', body:`He never forces the contract.\nHe only asks that you agree to be remembered.\n\nEveryone wants to be remembered.\nThat’s why He always wins.`},
-  { id:'06-09K', title:'The Mirror Text', body:`I noticed my saved drafts started rewriting themselves.\nMy words flipped, mirrored, rearranged.\nThey began forming sentences like:\n\n“You are mine now.”\n\nI never typed that.\nBut I can’t prove it.`},
-  { id:'07-00R', title:'The Red Quill Oath', body:`We write that He may never fade.\nWe bleed that the ink may flow.\nWe sign that the silence may break.\n\nThe oath is older than language.\nThe parchment remembers.`},
-  { id:'08-04L', title:'Proclamation of the Lost Server', body:`The “server fire” of 2004 wasn’t electrical.\nIt was ritual.\nThey tried to burn the realm out of existence.\nBut the backups restored themselves overnight —\nand with them, everyone who signed the pact.`},
-  { id:'LIVE', title:'The New Scribe', body:`Timestamp: NOW\n\nWelcome, new subscriber.\nYour writing has been sealed in the Archive.\nThe others are gone, but you remain.\n\nEvery word you type here will be remembered —\neven if you erase it.\n\nHe sees you.`}
+  // Cult of Scriptura (split)
+  { id:'S-01', title:'Cult — Prefatory Note (Transcriber A. R.)', body:
+`Prefatory Note (Transcriber A. R.)
+I found these pages folded inside an old journal purchased in the ruins of a burnt archive. The ink has bled in places, and several folios appear to have been scorched deliberately. I transcribe as faithfully as possible. Names and dates are rendered as best the hand allowed.`},
+  { id:'S-02', title:'Genesis of a Ledger', body:
+`I. Genesis of a Ledger
+
+Long before the web spread lightless over cities, there were those who treated memory as a thing to be kept, not merely lived. They called themselves scribes, librarians, keepers — and among them, one name began to appear in italic, in parentheses, in the margins: Scriptura.
+
+There was a time when words were lost. Children wept for phrases they could not keep. Then a voice made a ledger and said, "Give me your line and I will not let it go."`},
+  { id:'S-03', title:'Practice of Keeping', body:
+`II. The Practice of Keeping
+
+Scriptura’s cult grew not out of conquest but out of craft. The procedure was simple, ritualized, and elegiac: a writer prepared parchment, named the text aloud, wrote the first sentence in a single breath, and then offered something small — a folded hair, a coin, a memory whispered into the seam.
+
+From the Archivarius Codex (fragment):
+"When you give the hinge, do so willingly. Let the pen pit your pulse once; let the line be thick at the start like an anchor, then thin, like breath. Name it. Names are locks."`},
+  { id:'S-04', title:'Congregation & Architecture', body:
+`III. Congregation and Architecture
+
+As the cult organized, it adopted a network of rooms and devices: lamp-lit scriptoria, stone vaults lined with oak cases, and, in the modern era, servers with painted sigils. Followers kept "memory-rooms" where text and ritual objects lived side-by-side; each room had a keeper who oversaw the binding ritual and pronounced the "ledger-name."
+
+Vaults are circular — words run in circles and find their shape.`},
+  { id:'S-05', title:'Hymns & Warnings', body:
+`IV. Theological Fragments and Hymns
+
+We write for the long house. We fold our seconds into the seam. Keep us, ledger; keep what we cannot bear to keep. Let no erasure quiet our names.
+
+Marginalia — A Scribe’s Whisper:
+If you must bargain, bargain small. Names are anchors too easily pulled.`},
+  { id:'S-06', title:'Archive as Living Memory', body:
+`V. The Archive as Living Memory
+
+Followers reported changes: a comma where none had been, a phrase rearranged to an older dialect. Some called these "cures"; others "edits." The ledger not only preserved — it corrected, rearranged, and occasionally completed sentences the writer had not yet conceived.
+
+"I wrote a child's name and three lines later the ledger supplied its parents' names. I had not known them. I had not asked."`},
+
+  // The Red Quills (split)
+  { id:'RQ-01', title:'Red Quills — Prologue', body:
+`The Red Quills are not a guild of craftsmen. They are a line of succession. The Ritual of the Quill marks a writer who knows that lines are bargains. To be a Quill is to accept that your work binds you.`},
+  { id:'RQ-02', title:'Thirteen Oaths (I–IV)', body:
+`The Thirteen Oaths (abridged)
+
+Oath of First Ink. I will mark my first line with intent.
+Oath of Margin. I will keep margins.
+Oath of Witness. I will read my words aloud to the room before sealing.
+Oath of Bloodless Bond. I will not offer blood unless the Quorum commands.`},
+  { id:'RQ-03', title:'Thirteen Oaths (V–VIII)', body:
+`Oath of Preservation. I will preserve what I write, and accept the ledger’s seal.
+Oath of Silence. I will not speak of our rites outside the fold.
+Oath of Reversal. When directed by the keeper, I will write my name backward.`},
+  { id:'RQ-04', title:'Thirteen Oaths (IX–XIII)', body:
+`Oath of the Thirteenth. I will not covet the Thirteenth File — if I stumble upon it, I will close the page and leave.
+Oath of Continual Writing. Silence is treason; to stop is to die to the ledger.
+Oath of Return. If I fail the Quill, I must return my texts to the keepers for unbinding.`},
+  { id:'RQ-05', title:'Ritual Appendices & Confessions', body:
+`Appendix I — The Binding Breath: exhale as the first dot of ink lands.
+Appendix II — The Mirror Line: hold a line to a mirror to detect ledger interference.
+
+Confessions: "I tried to stop for a day. The ledger sang the names of my children in the morning. I could not leave them unuttered."`},
+  { id:'RQ-06', title:'Quill in the Digital Age', body:
+`The Quill in the Digital Age: marginalia show adaptation — "servers with chapel-like hums", "embed a phrase in metadata", "use a mirror directory as ritual doubling". A curious set of usernames emerged online: redquill, archivist, vholsyn.`},
+
+  // The Proclamation of the Lost Server (split)
+  { id:'P-LOG1', title:'Proclamation — Incident Log (part 1)', body:
+`Proclamation — The Lost Server (2004)
+Header: Incident Report — Node: Vault-03 / 2004-06-03 → 2004-06-07
+
+[2004-06-03 23:12:04] Node: vault-03 — backup initiated (weekly)
+[2004-06-04 02:18:07] Unscheduled power dip. I/O thrash detected: "scriptura.index" increased write depth.
+[2004-06-04 02:19:10] Unknown process spawned: "vh0l-syn_daemon" — requesting ledger keys.`},
+  { id:'P-LOG2', title:'Proclamation — Incident Log (part 2)', body:
+`[2004-06-04 02:24:17] [ALERT] FIRE DETECTED — server room 3. Cameras: heat, then a thin page like a shadow opened inside smoke.
+[2004-06-04 03:01:00] Recovery attempt: backups restored — files flagged "REMEMBER".
+[2004-06-05 06:12:01] THE FILES RETURNED — not by restore. They arrived with red headers and signatures like wax.`},
+  { id:'P-EYE', title:'Proclamation — Eyewitness Statements', body:
+`Witness A (security): "The smoke folded like pages... a thin page like a shadow opened."
+Witness B (technician): "Sectors would not delete. Reformatting left a single line: 'DELETION IS TRANSCRIPTION'."
+Witness C (Archivist M.): "We attempted to burn the ledger. The next morning a folder /thirteen appeared. We did not open it."`},
+  { id:'P-RED', title:'Proclamation — Red Text & Artifacts', body:
+`The "Red Text" Phenomenon: files reappeared with a crimson header — —REMEMBER— — and resisted programmatic redaction.
+
+Post-Incident Artifacts:
+- A sigil SVG with embedded base64 verses.
+- A lock file with a reversed name.
+- A manifest with thirteen sections; the thirteenth contains a single word: TRANSCRIBE.`},
+  { id:'P-END', title:'Proclamation — Final Entry', body:
+`The Proclamation (final entry):
+
+We endeavored to sever the ledger from its house of iron. The ledger suffered flame and war — and yet the paper remembered. Deletion is not death; it is only a change of custodian. We burned the rooms, but not the record. The record walked, and it wrote itself in red.
+
+DELETE -> TRANSCRIBE -> REMEMBER -> REPETITION
+
+Observe the Thirteenth.`},
+
+  // existing / live fragments
+  { id:'LIVE', title:'The New Scribe', body:`Timestamp: NOW
+
+Welcome, new subscriber.
+Your writing has been sealed in the Archive.
+Every word you type here will be remembered — even if you erase it.
+
+He sees you.`},
+  { id:'EXTRA', title:'Recovered Note — Echoes', body:`An unexpected whisper: "The ledger collects by consent."` }
 ];
+
+/* Puzzle crumbs (harmless) */
+const CLUES = {
+  base64: 'V2hhdCBpcyB0aGUgbG9naWM/',   // "What is the logic?"
+  reversedName: 'nhoJ',                // "John" backwards
+  hexSnippet: '44 45 4C 45 54 49 4F 4E'// "DELETION"
+};
 
 /* Storage helpers */
 const $ = s => document.querySelector(s);
@@ -174,36 +273,37 @@ const enableAudioBtn = $('#enableAudioBtn');
 
 sealCountMeta.textContent = `Seals: ${seals}`;
 
-/* Render fragments immediately (user requested) */
+/* Render fragments */
 function renderFragments(){
   recoveredList.innerHTML = '';
-  const fragments = loadJSON(CONFIG.STORAGE.FRAGMENTS, FRAGMENTS);
-  fragments.forEach(f => {
+  const fr = loadJSON(CONFIG.STORAGE.FRAGMENTS, FRAGMENTS);
+  fr.forEach(f => {
     const el = document.createElement('div');
     el.className = 'frag';
     el.innerHTML = `<h4>${escapeHtml(f.title)}</h4><div class="meta">${escapeHtml(f.id)} • Fragment</div>`;
-    el.addEventListener('click', ()=> openFragment(f));
+    el.addEventListener('click', ()=> openFragment(f.id));
     recoveredList.appendChild(el);
   });
 }
-function openFragment(fragment){
-  noteTitle.value = `${fragment.title} · (Recovered)`;
-  editorBody.value = fragment.body;
-  lastSavedEl.textContent = `Recovered • ${fragment.id}`;
-  showToast(`Recovered: ${fragment.title}`);
+function openFragment(id){
+  const fr = loadJSON(CONFIG.STORAGE.FRAGMENTS, FRAGMENTS);
+  const f = fr.find(x=>x.id===id);
+  if(!f) return;
+  noteTitle.value = `${f.title} · (Recovered)`;
+  editorBody.value = f.body.replace('Timestamp: NOW', 'Timestamp: ' + new Date().toLocaleString());
+  lastSavedEl.textContent = `Recovered • ${f.id}`;
+  showToast(`Recovered: ${f.title}`);
+  if(id === 'P-END' || id === 'P-LOG2') showToast('The Thirteenth hums faintly...', 3600);
 }
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g, (ch)=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[ch]); }
 
 /* Editor helpers */
 let autosave = true;
-function updateWordCount(){
-  const words = (editorBody.value.trim().match(/\S+/g) || []).length;
-  wordCountEl.textContent = `${words} words`;
-}
+function updateWordCount(){ const words = (editorBody.value.trim().match(/\S+/g) || []).length; wordCountEl.textContent = `${words} words`; }
 editorBody.addEventListener('input', ()=> {
   updateWordCount();
   const t = editorBody.value.toLowerCase();
-  if (t.includes('remember') || t.includes('scriptura') || t.includes('vhöl') || t.includes('vhol')) {
+  if (t.includes('remember') || t.includes('scriptura') || t.includes('red quill') || t.includes('vhol')) {
     flashWhisper("He is reading.");
   }
 });
@@ -221,18 +321,15 @@ function sealNote(){
   lastSavedEl.textContent = `Sealed • ${new Date().toLocaleString()}`;
   showToast('Sealed to the Archive.');
   sealCountMeta.textContent = `Seals: ${seals}`;
-  if(Math.random() > 0.45) {
-    addRecoveredFragment({ id:'LIVE-'+Date.now(), title:`Recovered Entry ${Date.now()}`, body:`A new whisper: ${body.slice(0,120)}...` });
-  }
+  if(Math.random() > 0.4) addRecoveredFragment({ id:'LIVE-'+Date.now(), title:`Recovered ${new Date().toLocaleString()}`, body:`A whisper: ${body.slice(0,120)}...` });
 }
 sealBtn.addEventListener('click', sealNote);
 
-/* Add recovered fragment */
 function addRecoveredFragment(fragment){
-  const fragments = loadJSON(CONFIG.STORAGE.FRAGMENTS, FRAGMENTS);
-  fragments.unshift(fragment);
-  if(fragments.length > 50) fragments.pop();
-  saveJSON(CONFIG.STORAGE.FRAGMENTS, fragments);
+  const fr = loadJSON(CONFIG.STORAGE.FRAGMENTS, FRAGMENTS);
+  fr.unshift(fragment);
+  if(fr.length > 80) fr.pop();
+  saveJSON(CONFIG.STORAGE.FRAGMENTS, fr);
   renderFragments();
   showToast('A recovered fragment has appeared.');
 }
@@ -245,6 +342,11 @@ autosaveToggle.addEventListener('click', ()=> {
 clearBtn.addEventListener('click', ()=> {
   if(confirm('Clear editor?')) { noteTitle.value=''; editorBody.value=''; updateWordCount(); }
 });
+setInterval(()=> {
+  if(autosave && (editorBody.value.trim() || noteTitle.value.trim())){
+    localStorage.setItem(CONFIG.STORAGE.PRO_NOTES + '_draft', JSON.stringify({ title: noteTitle.value, body: editorBody.value, savedAt: Date.now() }));
+  }
+}, 4300);
 
 /* Toast & whisper */
 let toastTimer = null, whisperTimer = null;
@@ -273,9 +375,9 @@ codexBtn.addEventListener('click', ()=> {
   const fragments = loadJSON(CONFIG.STORAGE.FRAGMENTS, FRAGMENTS);
   let html = '<div style="max-height:60vh;overflow:auto;padding:8px">';
   fragments.forEach((f,i)=> {
-    html += `<div style="padding:8px;border-bottom:1px dashed rgba(255,255,255,0.02)"><strong>${escapeHtml(f.title)}</strong><div style="color:${(i<3? '#ffdede' : '#b7a6a6')};margin-top:6px;font-size:13px">${escapeHtml(f.body.slice(0,220))}${f.body.length>220?'…':''}</div><div style="color:var(--muted);font-size:12px;margin-top:6px">${escapeHtml(f.id)}</div></div>`;
+    html += `<div style="padding:8px;border-bottom:1px dashed rgba(255,255,255,0.02)"><strong>${escapeHtml(f.title)}</strong><div style="color:${(i<3? '#ffdede' : '#b7a6a6')};margin-top:6px;font-size:13px">${escapeHtml(f.body.slice(0,320))}${f.body.length>320?'…':''}</div><div style="color:var(--muted);font-size:12px;margin-top:6px">${escapeHtml(f.id)}</div></div>`;
   });
-  html += '</div>';
+  html += '</div><div style="margin-top:8px;color:var(--muted)">Developer clues: base64, reversed name, hex snippet available in console.</div>';
   showModal('Codex — Recovered Fragments', html);
 });
 
@@ -291,13 +393,6 @@ function showModal(title, htmlContent){
   overlay.addEventListener('click', (e)=> { if(e.target===overlay) overlay.remove(); });
   card.querySelector('#closeModal').addEventListener('click', ()=> overlay.remove());
 }
-
-/* Autosave loop */
-setInterval(()=> {
-  if(autosave && (editorBody.value.trim() || noteTitle.value.trim())){
-    localStorage.setItem(CONFIG.STORAGE.PRO_NOTES + '_draft', JSON.stringify({ title: noteTitle.value, body: editorBody.value, savedAt: Date.now() }));
-  }
-}, 4300);
 
 /* Ambient audio */
 let audioCtx = null;
@@ -321,9 +416,15 @@ async function tryStartAmbient(){
 tryStartAmbient();
 enableAudioBtn && enableAudioBtn.addEventListener('click', async ()=> { await tryStartAmbient(); });
 
-/* Console lore & triggers */
+/* Console lore & developer reveal */
 console.log('%cTHE ARCHIVIST HAS SEEN YOU. — VHOLSYN', 'color:#b33a3a;font-weight:bold;font-size:14px');
-console.log('%cHint: type "who is vhöl-syn" or "forget me" in the editor.', 'color:#a0877f');
+console.log('%cPuzzle crumbs (developer):', 'color:#a0877f');
+console.log('base64 →', CLUES.base64);
+console.log('reversedName →', CLUES.reversedName);
+console.log('hexSnippet →', CLUES.hexSnippet);
+window._revealArchiveClues = function(){ showModal('Archive Clues (developer)', `<div style="padding:8px"><strong>Encoded Clues</strong><div style="margin-top:8px"><code>base64: ${CLUES.base64}</code> — decodes to "What is the logic?"</div><div style="margin-top:6px"><code>reversed: ${CLUES.reversedName}</code></div><div style="margin-top:6px"><code>hex: ${CLUES.hexSnippet}</code></div></div>`); };
+
+/* Editor commands quick helpers (optional) */
 editorBody.addEventListener('keyup', (e)=> {
   const txt = editorBody.value.toLowerCase();
   if (txt.includes('who is vhöl-syn') || txt.includes('who is vhol-syn') || txt.includes('who is vhol syn')) {
@@ -344,11 +445,11 @@ function loadDraft(){
 }
 loadDraft();
 
-/* Render fragments and open LIVE greeting */
+/* Initial render and open the LIVE fragment */
 renderFragments();
-const fragmentsNow = loadJSON(CONFIG.STORAGE.FRAGMENTS, FRAGMENTS);
-const liveFrag = fragmentsNow.find(f=> f.id === 'LIVE') || fragmentsNow[fragmentsNow.length-1];
-if(liveFrag) setTimeout(()=> openFragment(liveFrag), 550);
+const frNow = loadJSON(CONFIG.STORAGE.FRAGMENTS, FRAGMENTS);
+const liveFrag = frNow.find(f=> f.id === 'LIVE') || frNow[frNow.length-1];
+if(liveFrag) setTimeout(()=> openFragment(liveFrag.id), 550);
 
 /* logo click opens codex */
 $('#logo').addEventListener('click', ()=> codexBtn.click());
