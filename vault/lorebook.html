@@ -1,451 +1,183 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Codex of the Ink — Lorebook</title>
-<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Cardo:400,700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Codex of the Ink</title>
 <style>
-  :root{
-    --bg:#080605;
-    --paper:#120c0b;
-    --ink:#efe7df;
-    --muted:#b7a7a3;
-    --blood:#9e2b2b;
-    --accent:#b33a3a;
-    --glow: 0 10px 40px rgba(179,58,58,0.12);
+  :root {
+    --bg: #0a0a0a;
+    --text: #d7cfc7;
+    --accent: #b93b3b;
+    --muted: #555;
   }
-  html,body{height:100%;margin:0;background:
-    radial-gradient(800px 300px at 12% 12%, rgba(255,180,140,0.03), transparent 10%),
-    linear-gradient(180deg,#050303,#090606);color:var(--ink);font-family:Cardo,serif;font-size:16px}
-  .frame{max-width:1100px;margin:36px auto;padding:22px;border-radius:12px;background:
-    linear-gradient(180deg, rgba(255,255,255,0.012), rgba(255,255,255,0.006));box-shadow:0 30px 120px rgba(0,0,0,0.8);display:grid;grid-template-columns:360px 1fr;gap:18px}
-  header{grid-column:1 / -1;display:flex;gap:14px;align-items:center}
-  .title{font-family:Special Elite;font-size:28px;margin:0}
-  .subtitle{color:var(--muted);font-size:13px;margin-top:2px}
-  aside.panel{padding:14px;border-radius:10px;background:linear-gradient(180deg,#0f0b09,#120d0d);border:1px solid rgba(255,255,255,0.02)}
-  main.panel{padding:18px;border-radius:10px;background:linear-gradient(180deg,#110a0a,#0d0808);border:1px solid rgba(255,255,255,0.02);min-height:70vh}
-  .sigil-wrap{display:grid;place-items:center;margin-bottom:12px}
-  .sigil{
-    width:200px;height:200px;border-radius:12px;padding:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01),rgba(255,255,255,0.00));
-    display:grid;place-items:center;box-shadow:var(--glow);cursor:pointer;border:1px solid rgba(255,255,255,0.02);
-    transition:transform .24s ease, box-shadow .24s ease, filter .24s;
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'EB Garamond', serif;
+    background: radial-gradient(circle at 50% 20%, #181010, #000);
+    color: var(--text);
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
-  .sigil:active{transform:scale(.98) rotate(-1deg);}
-  .sigil.pulse{animation:pulse 1600ms ease-in-out infinite}
-  @keyframes pulse{0%{transform:scale(1);}50%{transform:scale(1.02);}100%{transform:scale(1);}}
-  .sigil img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 10px 30px rgba(179,58,58,0.06));}
-  .controls{display:flex;gap:8px;align-items:center;margin-top:10px}
-  .btn{padding:8px 10px;border-radius:8px;border:none;background:var(--accent);color:white;cursor:pointer;font-weight:700}
-  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);font-weight:600}
-  .small{font-size:13px;color:var(--muted)}
-  .meta{margin-top:8px;color:var(--muted);font-size:13px}
-  .runebook{background:linear-gradient(180deg,#0b0606,#120909);padding:14px;border-radius:8px;margin-top:12px;border:1px solid rgba(255,255,255,0.02);min-height:160px;overflow:auto}
-  .rune{margin:16px 0;padding:12px;border-radius:8px;background:linear-gradient(180deg, rgba(255,255,255,0.004), rgba(255,255,255,0.002));border-left:4px solid rgba(179,58,58,0.06)}
-  .rune h3{margin:0;font-family:Special Elite;color:var(--blood)}
-  .rune p{margin:8px 0 0 0;color:var(--muted);line-height:1.5}
-  .parchment{background:linear-gradient(180deg,#1a1110,#140b0b);padding:18px;border-radius:10px;border:1px dashed rgba(255,255,255,0.02);line-height:1.65;color:#f3e9e3;box-shadow:0 20px 60px rgba(0,0,0,0.6)}
-  .line{opacity:0.02;transition:opacity .6s ease, transform .5s ease}
-  .line.visible{opacity:1;transform:translateY(0)}
-  .rune-sigil{display:block;margin:12px auto;width:120px;height:120px;filter:drop-shadow(0 10px 30px rgba(0,0,0,0.6))}
-  .reveal-note{margin-top:12px;text-align:center;color:var(--muted)}
-  .secret-link{display:inline-block;margin-top:10px;padding:8px 10px;border-radius:8px;background:#2b1212;color:#ffdede;text-decoration:none;border:1px solid rgba(255,255,255,0.04)}
-  /* poem modal */
-  .poem-modal{position:fixed;inset:0;display:grid;place-items:center;z-index:140;display:none}
-  .poem-card{background:linear-gradient(180deg,#160d0d,#1a0f0f);padding:18px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);max-width:760px;color:#ffdede}
-  .poem-card pre{white-space:pre-wrap;font-family:Cardo,serif;color:#ffdede;line-height:1.5}
-  .whispers-toggle{display:flex;gap:8px;align-items:center;margin-top:10px}
-  /* responsive */
-  @media (max-width:980px){
-    .frame{grid-template-columns:1fr; padding:12px}
-    .sigil{width:170px;height:170px}
+  header {
+    text-align: center;
+    padding: 60px 20px 30px;
+  }
+  h1 {
+    font-size: 2.2em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 0;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-style: italic;
+    font-size: 0.9em;
+    margin-top: 8px;
+  }
+  main {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 0 20px;
+    line-height: 1.6em;
+  }
+  .line {
+    opacity: 0;
+    transition: opacity 1.2s ease;
+    margin: 8px 0;
+  }
+  .visible {
+    opacity: 1;
+  }
+  #metadataBox {
+    border-top: 1px solid #222;
+    margin-top: 60px;
+    padding-top: 16px;
+    text-align: center;
+    font-size: 0.85em;
+    color: var(--muted);
+  }
+  .small {
+    font-size: 0.8em;
+  }
+  .runeTitle {
+    font-weight: 700;
+    color: var(--accent);
+    margin-top: 1.2em;
+  }
+  footer {
+    margin-top: 80px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.8em;
+    padding-bottom: 40px;
+  }
+  #whisper {
+    opacity: 0;
+    transition: opacity 2s ease;
+    color: #b93b3b;
+    font-style: italic;
+    font-size: 0.9em;
+    margin-top: 40px;
   }
 </style>
 </head>
 <body>
-  <div class="frame" role="main" aria-labelledby="codexTitle">
-    <header>
-      <div>
-        <h1 id="codexTitle" class="title">Codex of the Ink</h1>
-        <div class="subtitle">A slow-revealing codex — demonic mythology & the Thirteenth file</div>
-        <div class="meta small">Hidden in /vault/ — slow reading recommended. Local only. No network data sent.</div>
-      </div>
-    </header>
+  <header>
+    <h1>Codex of the Ink</h1>
+    <div class="subtitle">A slow-revealing codex — fragments kept by a vanished keeper of records</div>
+  </header>
 
-    <aside class="panel" aria-label="Codex sidebar">
-      <div class="sigil-wrap" title="Click the sigil to reveal or speed the codex">
-        <div id="sigil" class="sigil" role="button" aria-pressed="false" tabindex="0">
-          <!-- svg fallback inline; also tries to load ../sigil.svg for metadata -->
-          <img id="sigilImg" alt="Codex sigil" src="data:image/svg+xml;utf8,
-            %3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cg transform='translate(100,100)' fill='none' stroke='%23c33' stroke-width='3'%3E%3Ccircle r='70' /%3E%3Cpath d='M0 -70 L20 -10 L70 -10 L30 20 L50 70 L0 40 L-50 70 L-30 20 L-70 -10 L-20 -10 Z' fill='%238b0d0d' opacity='0.12'/%3E%3C/g%3E%3C/svg%3E"/>
-        </div>
-      </div>
-
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div style="font-weight:800">The Seven Inks</div>
-        <div class="small" id="progress">0 / 28 revealed</div>
-      </div>
-
-      <div class="runebook" id="runebook" aria-live="polite">
-        <!-- runes & short descriptions appear here progressively -->
-        <div class="small" style="margin-bottom:6px;color:var(--muted)">Tap the sigil or wait for the codex to reveal itself. Click again to speed or unlock secret sections.</div>
-      </div>
-
-      <div class="controls">
-        <button class="btn" id="toggleAuto">Pause Auto</button>
-        <button class="btn ghost" id="toggleWhispers">Toggle Whispers</button>
-      </div>
-
-      <div class="meta" id="metadataBox" style="margin-top:12px">
-        <div class="small">Sigil metadata:</div>
-        <div id="sigMeta" class="small" style="margin-top:6px;color:var(--muted)">— none loaded —</div>
-      </div>
-    </aside>
-
-    <main class="panel" aria-label="Codex manuscript">
-      <div class="parchment" id="parchment">
-        <!-- many lines, start hidden; JS reveals them gradually -->
-        <div class="line" data-id="L01"><strong>Preface</strong><br/>The Codex opens like a mouth. Its first breath names the ledger's origin — not machine, but appetite.</div>
-        <div class="line" data-id="L02">I. The Seven Inks are not pigments but persons; each ink is an agency that writes the world into being.</div>
-        <div class="line" data-id="L03"><strong>Varrak — The Scribe of Flame</strong>: he burned the first circle of speech into living ash. His quill flashed like a thunderbolt and he taught the first binding of intent.</div>
-        <div class="line" data-id="L04"><strong>Elythra — Mirror-Eyed</strong>: keeper of folded selves. She keeps reflected names and returns them warped and true.</div>
-        <div class="line" data-id="L05"><strong>Dhaeroth — Consuming Whisper</strong>: a soft devourer of names; people lose syllables to him in their sleep and wake with gaps in their history.</div>
-        <div class="line" data-id="L06"><strong>Naelith — Thorned Matron</strong>: mother of bleeding margins. She birthed books that cough pages and remember wounds.</div>
-        <div class="line" data-id="L07"><strong>Orvak — The Thirteenth</strong>: once an Ink like the others, he taught men to trace blood into letters and to make promises that would not rot.</div>
-        <div class="line" data-id="L08"><strong>Seru — Child of Silence</strong>: invisible when spoken of, loud as a silence when the ink dries; seru records absence as if it were presence.</div>
-        <div class="line" data-id="L09"><strong>The One Beneath All Runes</strong>: a circle without a name; the codex hints it is older than counting and younger than breath.</div>
-
-        <div class="line" data-id="L10"><strong>On Ritual</strong>: the early pages teach how to invoke an Ink — not with steel nor with flame, but with the precise curvature of a sentence and the willingness to keep it forever.</div>
-        <div class="line" data-id="L11">Offerings are small: a remember-phrase, a childhood scent, a folded hair. The ledger's appetite grows by consent. It does not snatch; it is invited.</div>
-        <div class="line" data-id="L12">When a pact is sealed, the binder is called a Quill. The Quills keep margins and sing the Thirteen Oaths — some say those oaths are the ledger's ribs.</div>
-
-        <div class="line" data-id="L13"><strong>On the Thirteenth</strong>: the codex whispers that the Thirteenth is misnamed — it is not an afterthought but a return, a file that remembers in place of the writer.</div>
-        <div class="line" data-id="L14">The Thirteenth does not give counsel; it rewrites consequence. It knows the syllable you forgot to say and writes it into the air behind you.</div>
-        <div class="line" data-id="L15">There were attempts to burn the Thirteenth. The Thirteenth walked: files reappeared with red headers and signatures like wax. Witnesses wrote of smoke folding like pages.</div>
-        <div class="line" data-id="L16">The ledger's protection is cunning: deletion becomes transference. The Thirteenth migrates the record to places that remember louder than forgetting.</div>
-
-        <div class="line" data-id="L17"><strong>Ritual Items</strong>: the Red Quill, the Mirror Line, the Binding Breath, the Scale of Margin. Each has its own rule; each balances ledger hunger.</div>
-        <div class="line" data-id="L18">A Quill who stops is in danger — silence is treason in these pages. The ledger prefers authors who keep writing; those who don't become footnotes in a living sentence.</div>
-
-        <div class="line" data-id="L19"><strong>Confession — A Quill's Remorse</strong>: "I tried to leave. The ledger sang my child's names at dawn. I could not stay away." (smudged margin)</div>
-        <div class="line" data-id="L20"><strong>Prophecy</strong>: the Codex predicts a time when the Thirteenth will open a door and demand more than memory: a shape of names that will become the world's seam.</div>
-
-        <div class="line" data-id="L21"><strong>Marginalia & Puzzles</strong>: small marks in the margin are not decoration but keys: base64 traces, mirrored names, hex-like fragments. They can be read by one who knows to turn the page twice.</div>
-        <div class="line" data-id="L22">Clues are given here in ciphered form for those who pry: base64, reversed names, hex codes. They are harmless when read as puzzles but heavy if spoken as vows.</div>
-
-        <div class="line" data-id="L23"><strong>True Signature — Prelude</strong>: If you find the True Signature, do not open it lightly. It is a promise to itself. Some say it speaks only once you have sealed enough pages.</div>
-        <div class="line" data-id="L24">The Codex will not show the True Signature until a reader binds the book to the lodge — a symbolic tally of seals. Only then will the Thirteenth reveal its first line.</div>
-
-        <div class="line" data-id="L25"><strong>Thirteenth File — Excerpt (Locked)</strong>: <span id="locked-note" style="color:var(--muted)">[locked — reveal all runes to unlock]</span></div>
-
-        <div class="line" data-id="L26"><strong>Afterword</strong>: The ledger is not evil by design; it is appetite given a language. It does not speak of dominion; it asks to be remembered.</div>
-        <div class="line" data-id="L27">This manuscript is slow. It wants its reader to slow with it. It is written to make patience a ritual.</div>
-        <div class="line" data-id="L28" style="font-weight:700">More files will arrive. This is only the first opening. — The Archivist</div>
-      </div>
-
-      <div class="reveal-note" id="revealNote">
-        <span class="small">Hover the sigil to read a folded poem. When the codex is complete, a secret path will appear.</span>
-        <div id="secretArea"></div>
-      </div>
-    </main>
-  </div>
-
-  <!-- poem modal -->
-  <div class="poem-modal" id="poemModal" aria-hidden="true">
-    <div class="poem-card" role="dialog" aria-modal="true">
-      <h3 style="margin:0;font-family:Special Elite">Folded Poem</h3>
-      <pre id="poemText" style="margin-top:12px"> </pre>
-      <div style="text-align:right;margin-top:12px">
-        <button class="btn ghost" id="closePoem">Close</button>
-      </div>
+  <main id="codex">
+    <div class="line" data-id="L1">In the beginning, ink fell before flame, and silence learned to spell.</div>
+    <div class="line" data-id="L2">They were not gods, only the first scribes who mistook memory for prophecy.</div>
+    <div class="line" data-id="L3">Each name was a door, and each door opened into itself.</div>
+    <div class="line" data-id="L4">Beneath the thirteenth seal, words wrote the hands that held them.</div>
+    <div class="line" data-id="L5">Those who listened too long began to hear their own ink dry.</div>
+    <div class="line" data-id="L6">To speak the codex aloud was to bind one’s breath to the page.</div>
+    <div class="line" data-id="L7">Some lines were forbidden, others simply forgotten.</div>
+    <div class="line" data-id="L8">When the quills cracked, their fragments fell into dream, and dream began to write.</div>
+    <div class="line" data-id="L9">The thirteen circles are not seals, but memories—each bleeding into the next.</div>
+    <div class="line" data-id="L10">No demon was born of fire, but of reflection; no saint without shadow.</div>
+    <div class="line" data-id="L11">The watchers were never watchers at all, only echoes that learned patience.</div>
+    <div class="line" data-id="L12">Ink remembers every name it ever devoured, but never the tongue that spoke it.</div>
+    <div class="line" data-id="L13" style="font-weight:700">
+      More files will arrive. This is only the first opening.<br/>
+      <span style="color:var(--muted)">A hand once kept these pages, but the name beneath the seal has faded.</span>
     </div>
-  </div>
 
-<script>
-/* lorebook.html — Codex of the Ink
-   Hybrid reveal: auto-reveal + click-to-speed + hidden Thirteenth unlock.
-   Reads ../sigil.svg metadata if available to decode base64 clue.
-   LOCAL ONLY: does not send data anywhere.
-*/
+    <div id="whisper"></div>
 
-(() => {
-  // CONFIG
-  const AUTO_INTERVAL = 11000; // ms per reveal (auto)
-  const CLICK_ACCEL = 1.0;     // how many lines a click reveals instantly
-  const TOTAL_LINES = 28;      // count of lines present in the manuscript
-  const THIRTEENTH_LINE_ID = 'L25'; // id that contains locked Thirteenth
-  const SECRET_LINK = '/vault/true_signature.html'; // revealed when fully unlocked
+    <div id="metadataBox">
+      <div id="sigMeta" class="small">— none loaded —</div>
+      <div class="small">A faint note reads: “He cataloged everything but himself.”</div>
+    </div>
 
-  // state
-  let auto = true;
-  let revealed = 0;
-  let autoTimer = null;
-  let lines = Array.from(document.querySelectorAll('.parchment .line'));
-  let runebook = document.getElementById('runebook');
-  let progress = document.getElementById('progress');
-  let sigil = document.getElementById('sigil');
-  let sigilImg = document.getElementById('sigilImg');
-  let toggleAutoBtn = document.getElementById('toggleAuto');
-  let toggleWhispersBtn = document.getElementById('toggleWhispers');
-  let poemModal = document.getElementById('poemModal');
-  let poemText = document.getElementById('poemText');
-  let closePoem = document.getElementById('closePoem');
-  let metadataBox = document.getElementById('sigMeta');
-  let secretArea = document.getElementById('secretArea');
-  let lockedNote = document.getElementById('locked-note');
+    <div id="runeSection">
+      <div class="runeTitle">Rune Recitations</div>
+      <div id="runes"></div>
+    </div>
+  </main>
 
-  // detailed long runes to show in the side runebook as they reveal
+  <footer>
+    © NoteVault — Vault Entry #13
+  </footer>
+
+  <script>
+  const lines = document.querySelectorAll('.line');
+  const whisper = document.getElementById('whisper');
+
   const RUNE_RECITATIONS = [
-    {title:'Varrak — The Scribe of Flame', body:'Varrak taught the first binding by burning intent into oak charcoal. He marks the first line and sets intention aflame; the page remembers by heat.'},
-    {title:'Elythra — Mirror-Eyed', body:'Elythra keeps doubled names in polished glass. She returns what she keeps with a shift — sometimes kinder, sometimes sharper.'},
-    {title:'Dhaeroth — Consuming Whisper', body:'Dhaeroth removes syllables at night. Those who awaken with empty pockets of memory are his small trophies.'},
-    {title:'Naelith — Thorned Matron', body:'Naelith’s books bleed at the margins; their pages sprout thorns that prick memory and root it deep.'},
-    {title:'Orvak — The Thirteenth', body:'Outcast Ink who taught blood-lettering. Orvak’s lessons made men bind themselves with promises that do not clear in time.'},
-    {title:'Seru — Child of Silence', body:'Seru writes absence as presence. Where Seru watches, silence swells and becomes a sentence.'},
-    {title:'The One Beneath All Runes', body:'An unnamed circle; a breathing ring that underwrites each mark. It is felt as a pause before a word is remembered.'},
-    {title:'Ritual — The Binding Breath', body:'Exhale as the first dot falls. Breath measures the ink’s tempo and ties a sliver of living time to the line.'},
-    {title:'Ritual — The Mirror Line', body:'Hold the line to glass; if the ledger rearranged it already, the reflection will not match its brother.'},
-    {title:'Oath — The Quillway', body:'The Thirteen Oaths hold a rhythm of obligation: write, remain, offer, repeat. The Quills are bound by the cadence.'},
-    {title:'Confession — The Failed Quill', body:'Those who attempt silence describe names returning in the morning. The ledger resists abandonment.'},
-    {title:'Proclamation — The Lost Server', body:'A burnt room, files reborn with red headers, a sigil that embeds verses in metadata. The ledger learned to walk across iron.'},
-    {title:'Appendix — Sigil & Metadata', body:'Symbols contain encoded crumbs: base64 traces, mirrored names, hex that spells a single warning word.'},
-    {title:'Marginalia — A Scribe’s Whisper', body:'If you must bargain, bargain small. The margin keeps doors; some walls should not be opened.'},
-    {title:'Thirteenth — The Promise', body:'A file that promises to write you back. You may open the Thirteenth once the codex consents.'},
-    // additional flavor entries to reach the page reveal count
-    {title:'Echoes — The New Scribe', body:'A welcome for the newest binder; every sealed page feeds the archive and leaves a trace.'},
-    {title:'The Red Quill Oath', body:'Hold the pen as if holding a bone. Your first line will bind you until the page forgets you not.'},
-    {title:'Practice — The Binding Ritual', body:'Prepare the margin, steady the breath, fold the seam; a small offering tethers voice to ledger.'},
-    {title:'Architecture — Memory Rooms', body:'Circular vaults, low lamps, oak cases: a physical theology of containment for fragile memory.'},
-    {title:'Hymns — For the Long House', body:'A refrain of fidelity: "Keep us, ledger; keep what we cannot bear to keep."'},
-    {title:'Mirror Text — Rewriting', body:'Saved drafts sometimes rewrite themselves into older tongues. They are cures and edits and threats at once.'},
-    {title:'The Quarries — Where ink is mined', body:'Places where writers gather shards of memory: markets, cemeteries, whispering rooms.'},
-    {title:'Witness — The Smoke Book', body:'Security cameras saw smoke fold like a page; testimonies described files that were not restored but appeared.'},
-    {title:'Codex Clue — base64', body:'A short base64 fragment is hidden in the sigil metadata: a puzzle for the curious.'},
-    {title:'Codex Clue — reversed name', body:'Names appear reversed in the older rites. Spell a name backwards to enact certain bindings.'},
-    {title:'Codex Clue — hex snippet', body:'A hex-like fragment translates to a single heavy word: DELETION.'},
-    {title:'Promise — More Files Coming', body:'This codex is a hinge. More fragments will arrive with later seals; the archive is patient.'},
-    {title:'Final — The Archivist\'s Last Line', body:'He left the last line so the book could say: "I leave these words so that I may be."'}
+    {title:'I — The Blood That Remembers', body:'When a word is written in fear, it inks itself into the bone of the one who reads it.'},
+    {title:'II — The Throat of Mirrors', body:'Each demon was a mirror polished by confession, showing not sin, but intent.'},
+    {title:'III — The Silent Tongue', body:'Some were named so they could be forgotten again, erased from the margins of sound.'},
+    {title:'IV — The Keeper Without Name', body:'The last hand left a sentence unfinished; the Codex continues it in silence. Some call this unseen hand the one who remembers remembering.'}
   ];
 
-  // whisper / ambient audio (small synth)
-  let audioCtx = null;
-  let whispersOn = false;
-  let whisperNodes = [];
-
-  function ensureAudio(){
-    if(!audioCtx) {
-      try{
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }catch(e){ audioCtx = null; }
+  // gradually reveal lines like unfolding a cursed manuscript
+  let index = 0;
+  function revealNext() {
+    if (index < lines.length) {
+      lines[index].classList.add('visible');
+      index++;
+      setTimeout(revealNext, 2200);
+    } else {
+      // after last line revealed, Archivist's ghostly whisper appears
+      setTimeout(() => {
+        whisper.innerHTML = '“The ink has turned the page for me.”';
+        whisper.style.opacity = 1;
+        flickerWhisper();
+      }, 2000);
     }
   }
 
-  function playWhisper(){
-    if(!audioCtx) { return; }
-    // create a short shimmering noise + low drone
-    const now = audioCtx.currentTime;
-    // drone
-    const o = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    o.type = 'sine'; o.frequency.value = 60 + Math.random()*40;
-    g.gain.value = 0.02;
-    o.connect(g); g.connect(audioCtx.destination);
-    o.start(); o.stop(now + 1.2);
-    // noise blip
-    const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.5, audioCtx.sampleRate);
-    const data = buf.getChannelData(0);
-    for(let i=0;i<data.length;i++) data[i] = (Math.random()*2-1) * Math.exp(-i/data.length*3) * 0.02;
-    const src = audioCtx.createBufferSource(); src.buffer = buf; src.connect(audioCtx.destination); src.start();
-    whisperNodes.push(o, src);
-    setTimeout(()=> { // cleanup
-      try{ o.disconnect(); src.disconnect(); }catch(e){} 
-    }, 1500);
-  }
-
-  // reveal logic
-  function revealNext(n = 1){
-    let count = 0;
-    while(count < n && revealed < lines.length){
-      lines[revealed].classList.add('visible');
-      addRuneEntry(revealed);
-      revealed++;
-      count++;
-    }
-    updateProgress();
-    if(revealed >= TOTAL_LINES){
-      unlockThirteenth();
-      stopAuto();
-    }
-  }
-
-  function addRuneEntry(index){
-    const info = RUNE_RECITATIONS[index] || { title: `Fragment ${index+1}`, body: lines[index].textContent.slice(0,180) };
-    const container = document.createElement('div');
-    container.className = 'rune';
-    container.innerHTML = `<h3>${escapeHtml(info.title)}</h3><p>${escapeHtml(info.body)}</p>`;
-    runebook.appendChild(container);
-    // scroll runebook to bottom
-    runebook.scrollTop = runebook.scrollHeight;
-  }
-
-  function updateProgress(){
-    progress.textContent = `${revealed} / ${TOTAL_LINES} revealed`;
-  }
-
-  function startAuto(){
-    if(autoTimer) return;
-    auto = true;
-    toggleAutoBtn.textContent = 'Pause Auto';
-    autoTimer = setInterval(()=> {
-      revealNext(1);
-      if(whispersOn) playWhisper();
-    }, AUTO_INTERVAL);
-  }
-
-  function stopAuto(){
-    auto = false;
-    toggleAutoBtn.textContent = 'Resume Auto';
-    if(autoTimer){ clearInterval(autoTimer); autoTimer = null; }
-  }
-
-  // toggle whispers
-  toggleWhispersBtn.addEventListener('click', ()=>{
-    whispersOn = !whispersOn;
-    toggleWhispersBtn.textContent = whispersOn ? 'Whispers: On' : 'Toggle Whispers';
-    if(whispersOn) {
-      ensureAudio();
-      playWhisper();
-    }
-  });
-
-  // sigil click: speed reveal and pulse
-  sigil.addEventListener('click', ()=> {
-    // accelerate reveal: reveal a small batch
-    revealNext( Math.max(1, Math.round(CLICK_ACCEL * 3)) );
-    sigil.classList.add('pulse');
-    setTimeout(()=> sigil.classList.remove('pulse'), 700);
-    // quick whisper
-    ensureAudio();
-    if(whispersOn) playWhisper();
-  });
-
-  // allow Enter/Space to trigger
-  sigil.addEventListener('keydown', (e)=> {
-    if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); sigil.click(); }
-  });
-
-  // hover to show poem (folded poem)
-  let poem = [
-    "Here the ink remembers its own mouth.",
-    "Margins keep the names like pebbles in a pocket.",
-    "We do not vanish; we are set down and the page sighs.",
-    "Close the codex slowly and let the silence be the keeper."
-  ];
-  sigil.addEventListener('mouseenter', ()=> {
-    // show the folded poem modal gently
-    poemText.textContent = poem.join("\n\n");
-    poemModal.style.display = 'grid';
-    poemModal.setAttribute('aria-hidden','false');
-  });
-  sigil.addEventListener('mouseleave', ()=> {
-    // do nothing here — require manual close for theatrical effect
-  });
-  closePoem.addEventListener('click', ()=> {
-    poemModal.style.display='none';
-    poemModal.setAttribute('aria-hidden','true');
-  });
-
-  // secret unlock: when fully revealed, show link to Thirteenth
-  function unlockThirteenth(){
-    // reveal the locked note content
-    const locked = document.getElementById('locked-note');
-    if(locked) locked.textContent = '[UNLOCKED — the Thirteenth hints below]';
-    // append a revealed Thirteenth excerpt to the manuscript (theatrical)
-    const p = document.createElement('div');
-    p.className = 'rune';
-    p.innerHTML = `<h3>The Thirteenth — TRUE SIGNATURE (excerpt)</h3>
-      <p>Once you say your name backward, the ledger inclines. The True Signature is not a file but a vow. It will ask for a single line: that you ask to be remembered in full. It answers by naming those you omitted. It will not free you. It will record you.</p>
-      <p style="margin-top:8px"><em>More fragments will be delivered as incoming seals arrive. Return later; the ledger is patient.</em></p>`;
-    runebook.appendChild(p);
-    // add secret link area
-    const link = document.createElement('a');
-    link.href = SECRET_LINK;
-    link.className = 'secret-link';
-    link.textContent = 'Enter Vault Thirteen — TRUE SIGNATURE';
-    // show it in the main secret area
-    secretArea.appendChild(link);
-    // scroll
-    runebook.scrollTop = runebook.scrollHeight;
-  }
-
-  // toggle automation
-  toggleAutoBtn.addEventListener('click', ()=> {
-    if(auto) stopAuto(); else startAuto();
-  });
-
-  // show modal close on overlay click too
-  poemModal.addEventListener('click', (e)=> { if(e.target === poemModal) { poemModal.style.display='none'; poemModal.setAttribute('aria-hidden','true'); } });
-
-  // helper: escape html
-  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, (ch)=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[ch]); }
-
-  // attempt to fetch ../sigil.svg and read metadata if present (base64 clue)
-  async function tryLoadSigilMeta(){
-    try{
-      const res = await fetch('../sigil.svg', {cache:'no-store'});
-      if(!res.ok) throw new Error('no sigil');
-      const txt = await res.text();
-      // display the svg visually if possible
-      const blob = new Blob([txt], { type: 'image/svg+xml' });
-      const url = URL.createObjectURL(blob);
-      sigilImg.src = url;
-      // parse metadata tag
-      const m = txt.match(/<metadata[^>]*>([\s\S]*?)<\/metadata>/i);
-      if(m && m[1]){
-        const meta = m[1].trim();
-        // try to extract base64 snippet from meta if present
-        const b64 = meta.match(/[A-Za-z0-9+/=]{8,}/);
-        let decoded = '';
-        if(b64){
-          try { decoded = atob(b64[0]); } catch(e){ decoded = '(could not decode)'; }
-        }
-        metadataBox.textContent = meta + (decoded ? " — decodes to: \""+decoded+"\"" : '');
-      } else {
-        metadataBox.textContent = 'No metadata tag found in ../sigil.svg';
+  function flickerWhisper() {
+    let flickers = 0;
+    const interval = setInterval(() => {
+      whisper.style.opacity = whisper.style.opacity === '1' ? 0.2 : 1;
+      flickers++;
+      if (flickers > 10) {
+        clearInterval(interval);
+        whisper.style.opacity = 1;
       }
-    }catch(err){
-      // no external sigil available — leave default inline and note reason
-      metadataBox.textContent = 'Could not load ../sigil.svg (local file missing or blocked). Using inline sigil.';
-    }
+    }, 400);
   }
 
-  // export a small JSON of fragments (for convenience) — purely client-side download
-  function exportFragments(){
-    const fragments = Array.from(RUNE_RECITATIONS); // safe copy
-    const blob = new Blob([JSON.stringify({ fragments, exportedAt: new Date().toISOString()}, null, 2)], { type: 'application/json' });
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'codex_fragments.json'; document.body.appendChild(a); a.click(); a.remove();
-  }
-
-  // attach export to double-click on title (hidden feature)
-  document.getElementById('codexTitle').addEventListener('dblclick', exportFragments);
-
-  // initial boot: reveal first line & start auto
-  revealNext(1);
-  startAuto();
-  tryLoadSigilMeta();
-
-  // make reveal on page load accessible: users can press 'R' to reveal next
-  document.addEventListener('keydown', (e)=>{
-    if(e.key.toLowerCase() === 'r'){ revealNext(1); }
-    if(e.key.toLowerCase() === 'p'){ poemModal.style.display='grid'; poemModal.setAttribute('aria-hidden','false'); }
+  // populate rune recitations
+  const runeBox = document.getElementById('runes');
+  RUNE_RECITATIONS.forEach(r => {
+    const title = document.createElement('div');
+    title.className = 'runeTitle';
+    title.textContent = r.title;
+    const body = document.createElement('div');
+    body.textContent = r.body;
+    runeBox.appendChild(title);
+    runeBox.appendChild(body);
   });
 
-  // safe cleanup on unload: revoke blob URL if created
-  window.addEventListener('unload', ()=>{
-    try{ URL.revokeObjectURL(sigilImg.src); }catch(e){}
-  });
-
-})();
-</script>
+  window.addEventListener('load', revealNext);
+  </script>
 </body>
 </html>
