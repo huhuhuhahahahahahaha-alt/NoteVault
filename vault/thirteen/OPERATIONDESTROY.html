@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Strategic Command Console — Secure Launch Interface (v5)</title>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Cardo:400,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#020b14;
+    --accent:#e34b3b;
+    --text:#e6e6e6;
+    --muted:#9b9b9b;
+    --ok:#2fa86b;
+    --warn:#ff6b6b;
+  }
+  html,body{height:100%;}
+  body{
+    font-family:'Cardo',serif;
+    background:radial-gradient(circle at 50% 30%,#06121f,#000);
+    color:var(--text);
+    margin:0; padding:24px; min-height:100vh;
+    display:flex; gap:20px; align-items:flex-start; justify-content:center;
+  }
+  h1{font-family:'Special Elite',serif;letter-spacing:1px;margin:0 0 6px}
+  #panel{background:#071522; border:1px solid #0f2438; border-radius:10px; padding:18px; width:460px; box-shadow:0 0 30px rgba(0,0,0,0.6);} 
+  .display{background:#001100; color:#0f0; font-family:'Special Elite'; padding:10px; margin-bottom:10px; height:64px; overflow-y:auto; border:1px solid #033;} 
+  .keypad{display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:10px;} 
+  .key{background:#0a1a2a; border:1px solid #0f2438; color:var(--text); font-size:1.1em; padding:10px; cursor:pointer; text-align:center; border-radius:6px; user-select:none} 
+  .key:active{transform:translateY(1px)}
+  #auth,#launch,#monitor-toggle,#brief-toggle{display:block; width:100%; padding:10px; margin-top:8px; font-family:'Special Elite'; background:var(--accent); color:#fff; border:none; border-radius:6px; cursor:pointer} 
+  #auth:disabled,#launch:disabled,#monitor-toggle:disabled,#brief-toggle:disabled{background:#333;cursor:not-allowed} 
+  .leds{display:flex;justify-content:space-between;margin:12px 0} 
+  .led{width:20%;text-align:center;font-size:12px} 
+  .led .dot{display:inline-block;width:12px;height:12px;border-radius:50%;background:#222;box-shadow:0 0 6px #000 inset;margin-right:6px} 
+  .dot.on.ready{background:var(--ok);box-shadow:0 0 8px var(--ok)} 
+  .dot.on.auth{background:#ffd700;box-shadow:0 0 8px #ffd700} 
+  .dot.on.count{background:var(--warn);box-shadow:0 0 8px var(--warn)} 
+  #log{font-family:monospace;font-size:12px;background:#000;border:1px solid #0f2438;padding:10px;height:200px;overflow-y:auto;color:#0f0;margin-top:10px;white-space:pre-wrap} 
+
+  /* keycard area */
+  .cards{display:flex;gap:12px;align-items:center;margin-bottom:10px} 
+  .card{width:110px;height:70px;background:linear-gradient(180deg,#112233,#0a1a2a);border:2px solid #053;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#bde;cursor:grab}
+  .card[draggable="false"]{cursor:default;opacity:0.6}
+  .slot{width:110px;height:70px;border:2px dashed #224;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#445;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent)} 
+  .slot.inserted{border-style:solid;border-color:#0a6} 
+  .card.dragging{opacity:0.6;transform:scale(.98)} 
+
+  /* overhead CRT monitor */
+  .monitor{width:540px;height:360px;background:#011;border:4px solid #020;color:#8cff7a;padding:12px;border-radius:8px;position:relative;box-shadow:0 0 40px rgba(0,255,100,0.03)} 
+  .crt-screen{width:100%;height:100%;background:linear-gradient(transparent 20%, rgba(0,255,120,0.02) 21%);position:relative;overflow:hidden} 
+  .crt-text{font-family:monospace;color:#8cff7a;font-size:14px;line-height:1.25;padding:12px;white-space:pre-wrap;max-height:100%;overflow:auto} 
+  .scanline{position:absolute;inset:0;background-image:repeating-linear-gradient(to bottom, rgba(0,0,0,0.02) 0px, rgba(0,0,0,0.04) 1px);pointer-events:none;mix-blend-mode:multiply} 
+  .crt-glow{position:absolute;inset:0;box-shadow:inset 0 0 60px rgba(0,255,120,0.02);pointer-events:none} 
+  .monitor-header{position:absolute;top:6px;left:12px;font-size:12px;color:#bff} 
+  .monitor-close{position:absolute;top:6px;right:8px;background:#022;border-radius:4px;padding:4px 8px;border:1px solid #044;cursor:pointer} 
+  .monitor.booting{animation:crt-boot .9s steps(4) forwards}
+  @keyframes crt-boot{0%{filter:brightness(.2) contrast(.6)}50%{filter:brightness(1.4) contrast(1.2)}100%{filter:none}}
+
+  /* info modal (classified brief) */
+  .brief-modal{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;padding:24px;z-index:60}
+  .brief-panel{width:720px;max-width:95%;background:#08121a;border:2px solid #002b2b;padding:20px;border-radius:8px;color:#dbe;box-shadow:0 10px 40px rgba(0,0,0,0.8);font-family:Cardo,serif}
+  .brief-header{display:flex;justify-content:space-between;align-items:center}
+  .classification{font-family:Special Elite,serif;color:#ffcc00;letter-spacing:2px}
+  .brief-body{margin-top:12px;background:linear-gradient(180deg,#061219,#041018);padding:12px;border-radius:6px;border:1px solid rgba(255,255,255,0.02);font-size:14px}
+  .redacted{background:linear-gradient(90deg,#000,#000);color:#000;border-radius:2px;padding:0 6px}
+  .brief-close{background:#2b0f0f;color:#fff;border:none;padding:6px 10px;border-radius:4px;cursor:pointer}
+  .muted{color:var(--muted);font-size:12px}
+
+  /* small helpers */
+  #notice{position:fixed;bottom:18px;right:18px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);padding:10px;border-radius:8px;font-size:12px;opacity:0;transition:opacity .25s} 
+  .hidden{display:none}
+</style>
+</head>
+<body>
+  <div id="panel" aria-label="Main console">
+    <h1>TOP SECRET — STRATEGIC COMMAND CONSOLE</h1>
+    <div class="muted">PROJECT: ABYSS PURGE — AUTHORIZED PERSONNEL ONLY</div>
+
+    <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px">
+      <div class="cards" id="cards-area">
+        <div class="card" draggable="true" id="card1" role="button" tabindex="0">OP CARD 1</div>
+        <div class="card" draggable="true" id="card2" role="button" tabindex="0">OP CARD 2</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="slot" id="slot1" aria-label="Operator slot 1">SLOT 1</div>
+        <div class="slot" id="slot2" aria-label="Operator slot 2">SLOT 2</div>
+      </div>
+    </div>
+
+    <div class="display" id="display">INSERT KEYCARDS</div>
+
+    <div style="display:flex;gap:10px;margin-bottom:8px">
+      <div class="keypad" style="flex:1" id="keypad">
+        <div class="key">1</div><div class="key">2</div><div class="key">3</div>
+        <div class="key">4</div><div class="key">5</div><div class="key">6</div>
+        <div class="key">7</div><div class="key">8</div><div class="key">9</div>
+        <div class="key">CLR</div><div class="key">0</div><div class="key">ENT</div>
+      </div>
+      <div style="width:140px;display:flex;flex-direction:column;gap:8px">
+        <input type="password" id="input" placeholder="TYPE ACCESS CODE" aria-label="access code input" style="padding:10px;font-family:monospace;background:#001;border:1px solid #033;color:#8cff7a;border-radius:6px">
+        <button id="auth" disabled>ARM SYSTEM</button>
+        <button id="launch" disabled>INITIATE LAUNCH</button>
+        <button id="monitor-toggle">TOGGLE MONITOR (M)</button>
+        <button id="brief-toggle">VIEW MISSION BRIEF</button>
+      </div>
+    </div>
+
+    <div class="leds">
+      <div class="led"><span class="dot ready" id="dot-ready"></span> READY</div>
+      <div class="led"><span class="dot auth" id="dot-auth"></span> AUTH</div>
+      <div class="led"><span class="dot count" id="dot-count"></span> COUNT</div>
+    </div>
+
+    <div id="log">[boot] System initializing...</div>
+  </div>
+
+  <div class="monitor" id="monitor" style="display:none" role="dialog" aria-label="Overhead monitor">
+    <div class="monitor-header">OVERHEAD MONITOR — CRT FEED</div>
+    <div class="monitor-close" id="monitor-close" role="button" tabindex="0">X</div>
+    <div class="crt-screen">
+      <div class="crt-text" id="crt-text">INITIALIZING MONITOR...</div>
+      <div class="scanline"></div>
+      <div class="crt-glow"></div>
+    </div>
+  </div>
+
+  <div id="notice" role="status" aria-live="polite"></div>
+
+  <!-- Classified Mission Brief Modal -->
+  <div class="brief-modal hidden" id="brief-modal" role="dialog" aria-label="Classified Mission Brief">
+    <div class="brief-panel">
+      <div class="brief-header">
+        <div>
+          <div style="font-size:18px;font-family:Special Elite;color:#ffcc00">UNITED STATES — DEPARTMENT OF UNORTHODOX OPERATIONS</div>
+          <div class="classification">TOP SECRET // EYES ONLY // NO RECORD</div>
+        </div>
+        <button class="brief-close" id="brief-close">CLOSE</button>
+      </div>
+      <div class="brief-body">
+        <h2 style="margin:0;font-family:Special Elite">PROJECT: ABYSS PURGE — MISSION BRIEF</h2>
+        <p class="muted" style="margin-top:6px">Classification: <strong>TOP SECRET</strong> — Compartmentalized access only.</p>
+
+        <p style="margin-top:12px">Summary: <em>Project: ABYSS PURGE</em> is a clandestine government program established to eradicate a non-terrestrial, extradimensional threat originating from a hostile domain referred to in records as <strong>"THE ABYSS"</strong>. The operation's primary objective is the targeted neutralization of hostile entities (informally catalogued as <strong>DEMON CLASS — ALPHA</strong>) and to prevent their spread into conventional space-time.</p>
+
+        <p>Authorized action: deployment of a high-yield device capable of destabilizing the Abyssian nexus. The device — code-named <strong>"THE PURGE"</strong> — is controlled by this console under dual-operator protocol.</p>
+
+        <p>Operational notes: keycards must be authenticated by two authorized operators. A parity-based cryptographic check is used in pre-release testing. All launch sequences must be verified visually via the overhead CRT and by mission control observers.</p>
+
+        <p style="margin-top:10px">Restrictions: Access to this console and mission data is restricted. The following lines of sensitive logs are redacted for security:</p>
+
+        <pre style="background:transparent;border:none;padding:6px;margin:6px 0;color:#8cff7a;font-family:monospace">LOG: ████████ ██████ ████
+LOG: ████████-█████ AUTHORIZED
+OPERATOR: ██████
+TARGET COORDINATES: ███.███ / ███.███
+PAYLOAD: █████████████</pre>
+
+        <p class="muted">Authorized personnel (classified): Director: <span class="redacted">REDACTED</span> | Lead Engineer: <span class="redacted">REDACTED</span> | Oversight: Joint Occult Response Unit</p>
+
+      </div>
+    </div>
+  </div>
+
+<script>
+// --- Elements ---
+const card1 = document.getElementById('card1');
+const card2 = document.getElementById('card2');
+const slot1 = document.getElementById('slot1');
+const slot2 = document.getElementById('slot2');
+const display = document.getElementById('display');
+const input = document.getElementById('input');
+const auth = document.getElementById('auth');
+const launch = document.getElementById('launch');
+const monitorToggle = document.getElementById('monitor-toggle');
+const briefToggle = document.getElementById('brief-toggle');
+const monitor = document.getElementById('monitor');
+const monitorClose = document.getElementById('monitor-close');
+const logBox = document.getElementById('log');
+const notice = document.getElementById('notice');
+const crtText = document.getElementById('crt-text');
+const dotReady = document.getElementById('dot-ready');
+const dotAuth = document.getElementById('dot-auth');
+const dotCount = document.getElementById('dot-count');
+const briefModal = document.getElementById('brief-modal');
+const briefClose = document.getElementById('brief-close');
+const keypad = document.getElementById('keypad');
+
+let dragged = null;
+let cardsInserted = {slot1:false, slot2:false};
+let operator1 = '';
+let operator2 = '';
+let step = 0; // 0 = waiting cards, 1 = op1 entered, 2 = op2 entered/armed
+let monitorInterval = null;
+let countdownInterval = null;
+let lastLogSaved = '';
+
+// --- Utilities ---
+function ts(){ return new Date().toLocaleTimeString(); }
+function saveLog(){ try{ localStorage.setItem('scc_log', logBox.textContent); }catch(e){} }
+function loadLog(){ try{ const l = localStorage.getItem('scc_log'); if(l){ logBox.textContent = l; } }catch(e){} }
+
+function log(msg){
+  try{
+    const line = '[' + ts() + '] ' + msg + '\n';
+    logBox.textContent += line;
+    logBox.scrollTop = logBox.scrollHeight;
+    // mirror to CRT safely (keep CRT succinct)
+    if(getComputedStyle(monitor).display !== 'none'){
+      // keep just last 8 lines on CRT
+      const recent = logBox.textContent.split('\n').slice(-9).join('\n');
+      crtText.textContent = ts() + ' | ' + 'FEED' + '\n\n' + recent;
+      crtText.scrollTop = crtText.scrollHeight;
+    }
+    saveLog();
+  }catch(e){ console.warn(e); }
+}
+function flash(msg){ notice.textContent = msg; notice.style.opacity = 1; setTimeout(()=> notice.style.opacity = 0, 2200); }
+function beep(freq=440,dur=120){
+  try{
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.frequency.value = freq; g.gain.value = 0.02; o.start();
+    setTimeout(()=>{ try{ o.stop(); }catch(e){} try{ ctx.close(); }catch(e){} }, dur);
+  }catch(e){ /* ignore audio errors */ }
+}
+function speak(text, opts={pitch:0.9,rate:0.95}){
+  try{
+    const u = new SpeechSynthesisUtterance(text);
+    u.pitch = opts.pitch; u.rate = opts.rate; u.volume = 0.85;
+    const voices = speechSynthesis.getVoices();
+    if(voices && voices.length) u.voice = voices.find(v=>/en|United/.test(v.lang)) || voices[0];
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+// --- Drag and drop + click/keyboard insert ---
+[card1, card2].forEach(card => {
+  card.addEventListener('dragstart', e => { dragged = card; card.classList.add('dragging'); });
+  card.addEventListener('dragend', e => { if(card) card.classList.remove('dragging'); dragged = null; });
+  // keyboard/enter to 'insert' into first available slot
+  card.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); insertCardIntoAvailable(card); } });
+  // double click to insert
+  card.addEventListener('dblclick', e => insertCardIntoAvailable(card));
+});
+
+[slot1, slot2].forEach(slot => {
+  slot.addEventListener('dragover', e => { e.preventDefault(); slot.style.background = '#022'; });
+  slot.addEventListener('dragleave', e => { slot.style.background = 'linear-gradient(180deg,rgba(255,255,255,0.01),transparent)'; });
+  slot.addEventListener('drop', e => {
+    e.preventDefault(); slot.style.background = 'linear-gradient(180deg,rgba(255,255,255,0.01),transparent)';
+    if(!dragged) return;
+    placeCardInSlot(dragged, slot);
+  });
+});
+
+function placeCardInSlot(card, slot){
+  // physically move the card node into the slot for clearer visual feedback
+  try{
+    slot.textContent = '';
+    slot.appendChild(card);
+    card.style.cursor = 'default';
+    card.setAttribute('draggable','false');
+    card.setAttribute('aria-hidden','true');
+    card.classList.remove('dragging');
+    card.classList.add('used');
+  }catch(e){ /* fallback */ }
+  slot.classList.add('inserted');
+  if(slot.id === 'slot1') cardsInserted.slot1 = true; else cardsInserted.slot2 = true;
+  log(slot.id.toUpperCase() + ' INSERTED: ' + card.textContent.trim());
+  beep(700,80);
+  checkCards();
+}
+
+function insertCardIntoAvailable(card){
+  if(!card || (card.getAttribute('aria-hidden') === 'true')){ flash('CARD ALREADY USED'); return; }
+  if(!cardsInserted.slot1){ placeCardInSlot(card, slot1); }
+  else if(!cardsInserted.slot2){ placeCardInSlot(card, slot2); }
+  else { flash('ALL SLOTS OCCUPIED'); }
+}
+
+// --- keypad behavior ---
+function enableKeypad(enabled){
+  document.querySelectorAll('.key').forEach(k=>{ k.style.pointerEvents = enabled ? 'auto' : 'none'; k.setAttribute('aria-disabled', !enabled); });
+  input.disabled = !enabled;
+}
+
+// support keyboard numeric entry and shortcuts
+document.addEventListener('keydown', e => {
+  if(document.activeElement === input) return; // let input handle its own keys
+  if(/^[0-9]$/.test(e.key)) appendDigit(e.key);
+  if(e.key === 'Enter') processInput();
+  if(e.key === 'Backspace') { input.value = input.value.slice(0,-1); display.textContent = 'INPUT: ' + '*'.repeat(input.value.length); }
+});
+
+function appendDigit(d){ if(input.disabled) return; input.value += d; display.textContent = 'INPUT: ' + '*'.repeat(input.value.length); beep(700,80); }
+
+keypad.querySelectorAll('.key').forEach(k=>{
+  k.addEventListener('click', ()=>{
+    const v = k.textContent;
+    if(v === 'CLR'){ input.value = ''; display.textContent = 'INPUT CLEARED'; beep(250,80); return; }
+    if(v === 'ENT'){ processInput(); return; }
+    appendDigit(v);
+  });
+});
+
+input.addEventListener('keydown', e => { if(e.key === 'Enter') processInput(); });
+
+// --- authorization flow ---
+function checkCards(){
+  if(cardsInserted.slot1 && cardsInserted.slot2){
+    display.textContent = 'KEYCARDS VERIFIED — ENTER OPERATOR 1 CODE';
+    dotReady.classList.add('on');
+    enableKeypad(true);
+    flash('Keycards accepted');
+    beep(900,120);
+    log('KEYCARDS VERIFIED. Awaiting Operator 1.');
+  } else {
+    enableKeypad(false);
+    dotReady.classList.remove('on');
+  }
+}
+
+function processInput(){
+  if(!cardsInserted.slot1 || !cardsInserted.slot2){ flash('INSERT BOTH KEYCARDS FIRST'); beep(180); return; }
+  const val = input.value.trim();
+  if(!val){ flash('NO INPUT'); beep(180); return; }
+  if(step === 0){
+    operator1 = val; step = 1; input.value = ''; display.textContent = 'OPERATOR 1 CODE ACCEPTED — ENTER OPERATOR 2 CODE'; log('Operator 1 code recorded. Awaiting Operator 2.'); flash('Operator 1 confirmed'); beep(800); speak('Operator one confirmed');
+  } else if(step === 1){
+    operator2 = val; input.value = '';
+    // parody parity check replaced with a deterministic check that's easy for ARGs: sum of digits even
+    const sumDigits = (s)=> s.split('').reduce((a,c)=>a+Number(c||0),0);
+    const pass = ((sumDigits(operator1) + sumDigits(operator2)) % 2) === 0;
+    if(pass){ step = 2; display.textContent = 'AUTHORIZATION SUCCESS — SYSTEM ARMED'; auth.disabled = false; dotAuth.classList.add('on'); log('Operator 2 code accepted. System armed.'); flash('Authorization granted'); beep(1000,140); speak('Authorization granted'); }
+    else { display.textContent = 'AUTH FAIL — RE-ENTER OPERATOR 2'; log('Operator 2 code rejected.'); flash('Auth failed'); beep(160,120); speak('Authorization failed'); }
+  }
+}
+
+auth.addEventListener('click', ()=>{
+  if(step !== 2){ flash('SYSTEM NOT READY'); beep(180); return; }
+  runArmingSequence();
+});
+
+// arming / launch sequence with staged steps
+async function runArmingSequence(){
+  log('ARMING PROCEDURE INITIATED...');
+  display.textContent = '';
+  const steps = [
+    'Powering primary reactors...',
+    'Gyros aligning...',
+    'Telemetry feed sync...',
+    'Safety interlocks: DISARMED',
+    'Targeting grid nominal...',
+    'Secondary yield calibration...',
+    'Finalizing targeting solution...'
+  ];
+  // show on CRT dramatically
+  monitor.style.display = 'block';
+  monitor.classList.add('booting');
+  startMonitor();
+  for(const s of steps){
+    log(s);
+    await typeDisplay(s);
+    beep(700,120);
+    await new Promise(r=>setTimeout(r,700));
+  }
+  display.textContent = 'ARM COMPLETE';
+  launch.disabled = false;
+  flash('All systems ready');
+  beep(1100,160);
+  speak('Systems armed. Launch ready.');
+}
+
+// simple typewriter effect for display and CRT
+function typeDisplay(text, speed=24){
+  return new Promise(res=>{
+    display.textContent = '';
+    let i = 0;
+    const id = setInterval(()=>{
+      display.textContent += text.charAt(i);
+      i++;
+      if(i >= text.length){ clearInterval(id); res(); }
+    }, speed);
+  });
+}
+
+// --- launch countdown ---
+launch.addEventListener('click', ()=>{ if(launch.disabled) return; if(step < 2) { flash('NOT AUTHORIZED'); return; } runLaunchSequence(); });
+
+async function runLaunchSequence(){
+  launch.disabled = true;
+  dotCount.classList.add('on');
+  log('COUNTDOWN SEQUENCE INITIATED');
+  flash('Countdown initiated');
+  speak('Countdown initiated');
+
+  // pre-countdown checks
+  const pre = [
+    'Target lock: CONFIRMED',
+    'Demon Lair signature: AUTHENTICATED',
+    'Trajectory: OPTIMAL',
+    'Range: TRANSMISSION STABLE'
+  ];
+  for(const p of pre){ log(p); await typeDisplay(p); beep(600,80); await new Promise(r=>setTimeout(r,700)); }
+
+  // final countdown from 10
+  let t = 10;
+  display.textContent = 'T - ' + t;
+  log('COUNTDOWN STARTED (T-10)');
+  if(countdownInterval) clearInterval(countdownInterval);
+  // update CRT with a nicer countdown loop
+  countdownInterval = setInterval(()=>{
+    t--;
+    display.textContent = 'T - ' + t;
+    log('T - ' + t);
+    beep(600,80);
+    if(t <= 0){ clearInterval(countdownInterval); countdownInterval = null; finishLaunch(); }
+  }, 1000);
+}
+
+function finishLaunch(){
+  display.textContent = 'LAUNCH COMPLETE — MISSION: PURGE EXECUTED';
+  log('Launch simulated successfully. Payload: THE PURGE — DEMON NEXUS NEUTRALIZED.');
+  flash('Launch success — returning to standby');
+  speak('Launch complete. Standby for telemetry.');
+  setTimeout(()=> resetConsole(), 1800);
+}
+
+function resetConsole(){
+  // slight delay already applied; now reset
+  cardsInserted = {slot1:false, slot2:false}; operator1 = ''; operator2 = ''; step = 0; auth.disabled = true; launch.disabled = true; dotReady.classList.remove('on'); dotAuth.classList.remove('on'); dotCount.classList.remove('on');
+  // move cards back
+  try{
+    const cardsArea = document.getElementById('cards-area');
+    [card1, card2].forEach(c=>{
+      if(c.parentElement && (c.parentElement.id === 'slot1' || c.parentElement.id === 'slot2')){
+        cardsArea.appendChild(c);
+        c.setAttribute('draggable','true');
+        c.removeAttribute('aria-hidden');
+        c.classList.remove('used');
+      }
+    });
+    slot1.classList.remove('inserted'); slot2.classList.remove('inserted');
+    slot1.textContent = 'SLOT 1'; slot2.textContent = 'SLOT 2';
+  }catch(e){}
+  display.textContent = 'INSERT KEYCARDS'; enableKeypad(false);
+  log('Console reset. Awaiting keycards.');
+}
+
+// --- monitor behavior ---
+monitorToggle.addEventListener('click', toggleMonitor);
+monitorClose.addEventListener('click', toggleMonitor);
+function toggleMonitor(){ if(getComputedStyle(monitor).display === 'none' || monitor.classList.contains('hidden')){ monitor.style.display = 'block'; startMonitor(); } else { monitor.style.display = 'none'; stopMonitor(); } }
+
+function startMonitor(){
+  crtText.textContent = 'CRT FEED INITIALIZING...';
+  monitor.classList.add('booting');
+  if(monitorInterval) clearInterval(monitorInterval);
+  monitorInterval = setInterval(()=>{
+    const temp = (40 + Math.random()*6).toFixed(1);
+    const readiness = Math.min(100, (dotReady.classList.contains('on')?40:0) + (dotAuth.classList.contains('on')?40:0) + (dotCount.classList.contains('on')?20:0));
+    const now = ts();
+    let feed = now + ' | TEMP: ' + temp + 'C | READINESS: ' + readiness + '%\n\n';
+    // include small ARG hook lines intermittently
+    const hook = Math.random() < 0.08 ? '[ARCHIVE] SOURCE: OP-SITE-NEXUS/NOTE-REDACT' : '';
+    const recent = logBox.textContent.split('\n').slice(-6).join('\n');
+    feed += recent + '\n' + hook;
+    crtText.textContent = feed;
+    crtText.scrollTop = crtText.scrollHeight;
+  }, 900);
+}
+function stopMonitor(){ if(monitorInterval) clearInterval(monitorInterval); monitorInterval = null; monitor.classList.remove('booting'); }
+
+// Brief modal handlers
+briefToggle.addEventListener('click', ()=>{ briefModal.classList.remove('hidden'); briefModal.style.display = 'flex'; });
+briefClose.addEventListener('click', ()=>{ briefModal.classList.add('hidden'); briefModal.style.display = 'none'; });
+briefModal.addEventListener('click', (e)=>{ if(e.target === briefModal) { briefModal.classList.add('hidden'); briefModal.style.display = 'none'; } });
+
+// keyboard shortcuts
+document.addEventListener('keydown', e=>{ if(e.key.toLowerCase() === 'm'){ toggleMonitor(); } if(e.key.toLowerCase() === 'b'){ briefModal.classList.toggle('hidden'); briefModal.style.display = briefModal.classList.contains('hidden') ? 'none' : 'flex'; } });
+
+// initial state
+loadLog(); enableKeypad(false); auth.disabled = true; launch.disabled = true; log('[boot] System initialized. Awaiting keycards.');
+
+</script>
+</body>
+</html>
