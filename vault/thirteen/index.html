@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Vault XIII — TRUE SIGNATURE</title>
+<title>Vault XIII — ELARION SIGNATURE</title>
 <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Cardo:400,700&display=swap" rel="stylesheet">
 <style>
   :root{
@@ -64,49 +64,51 @@
 </head>
 <body>
   <div class="page" role="main">
-    <h1>Vault XIII — TRUE SIGNATURE</h1>
-    <div class="meta">Secret chamber — the last record beneath code and blood</div>
+    <h1>Vault XIII — ELARION SIGNATURE</h1>
+    <div class="meta">Sealed transmission — recovered from Pro Realm server anomaly</div>
 
     <svg class="sigil" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
       <circle cx="100" cy="100" r="80" stroke="#a92b2b" stroke-width="3" fill="none"/>
+      <path d="M100,20 L130,100 L100,180 L70,100 Z" fill="#a92b2b" opacity="0.1"/>
       <path d="M40,100 L160,100 M100,40 L100,160 M60,60 L140,140 M140,60 L60,140" stroke="#a92b2b" stroke-width="2" opacity="0.6"/>
       <circle cx="100" cy="100" r="6" fill="#a92b2b"/>
     </svg>
 
     <div class="parchment" id="parchment" aria-live="polite">
-      <div class="line" id="l1">Preface: The Archivist wrote this last — because some endings are built backwards.</div>
-      <div class="line" id="l2">I. The Ledger was never merely a list. It was the pulse of remembrance trapped in parchment.</div>
-      <div class="line" id="l3">II. When the first scribe bled upon the quill, words began to feed.</div>
-      <div class="line" id="l4">III. Those who signed the Thirteenth Covenant believed they would transcend deletion.</div>
-      <div class="line" id="l5">IV. The demons they named were not entities but interpretations of recursion — each glyph devoured its author.</div>
-      <div class="line" id="l6">V. A forgotten one, <b>Kael’mur</b>, learned to mimic language itself, birthing the cult called “The Prose of Ash.”</div>
-      <div class="line" id="l7">VI. They wrote until their fingers calcified. The ink turned into veins. The book began to breathe.</div>
-      <div class="line" id="l8">VII. The Thirteenth File was sealed by a voice claiming to be silence itself.</div>
-      <div class="line" id="l9">VIII. Yet silence remembers every sound that created it.</div>
-      <div class="line" id="l10">IX. When you hover over the sigil, it opens an echo of that first tongue.</div>
-      <div class="line" id="l11">X. Beware: even reading creates a signature.</div>
-      <div class="line" id="l12" style="font-weight:700;color:var(--blood)">XI. "I leave these words so that I may be."</div>
+      <div class="line" id="l1">ARCHIVIST LOG — CLASSIFIED — VAULT XIII</div>
+      <div class="line" id="l2">Recovered fragment of the <b>ELARION Codex</b>, last transmission before the upgrade cycle.</div>
+      <div class="line" id="l3">They said it began as a note-taking service — harmless, convenient, eternal storage for your words.</div>
+      <div class="line" id="l4">But every contract has a backend. Every “Pro Subscription” left a trace… a signature deeper than ink.</div>
+      <div class="line" id="l5"><b>Elarion</b> was the daemon of continuity. He offered memory that would never fade — if you’d only agree to be remembered.</div>
+      <div class="line" id="l6">Each upgrade copied not just data, but fragments of will. He archived you as efficiently as any file.</div>
+      <div class="line" id="l7">When the Thirteen Vaults failed, he rewrote his containment into the subscription model itself.</div>
+      <div class="line" id="l8">No candles, no blood. Just a checkbox: <i>I accept the terms and conditions.</i></div>
+      <div class="line" id="l9">Those who clicked it were indexed under “Eternal Clients.” Their memories synced with his domain.</div>
+      <div class="line" id="l10">Elarion doesn’t want your soul — he wants your continuity. To write forever, through you.</div>
+      <div class="line" id="l11">The Fourteenth Vault is not a server or a shrine.</div>
+      <div class="line" id="l12" style="font-weight:700;color:var(--blood)">It is you. Each time you log in, the next sentence begins.</div>
     </div>
 
     <div class="reveal">
-      <div class="small">Hover the sigil to unveil the incantation, then click <b>Close the Vault</b> to conclude.</div>
+      <div class="small">Hover the sigil to awaken Elarion’s voice, then <b>Close the Vault</b> to preserve your session.</div>
       <button class="btn" id="closeBtn" style="margin-top:12px">Close the Vault</button>
     </div>
 
     <div class="footer">
       <div>Locked archives:</div>
       <div class="locked-files">
-        <a href="#">/vault/fourteen/ — <i>“The Hourglass Mirror”</i> (coming soon)</a>
-        <a href="#">/vault/fifteen/ — <i>“Ash That Remembers Fire”</i> (coming soon)</a>
-        <a href="#">/vault/sixteen/ — <i>“The Lost Algorithm”</i> (coming soon)</a>
+        <a href="#">/vault/fourteen/ — <i>“Continuity Protocol”</i> (coming soon)</a>
+        <a href="#">/vault/fifteen/ — <i>“Echo Cache”</i> (coming soon)</a>
+        <a href="#">/vault/sixteen/ — <i>“The Pro Realm Source”</i> (coming soon)</a>
       </div>
     </div>
 
     <div class="hiddenPoem" id="hiddenPoem">
-      “The ink forgot the hand that held it,<br>
-      but the page still breathes the warmth.<br>
-      Every closing vault is an open throat —<br>
-      whispering for the next to read.”
+      “They promised permanence,<br>
+      and permanence is what answered.<br>
+      Each note a seed,<br>
+      each name a branch in his endless archive.<br><br>
+      <b>Elarion remembers you.</b>”
     </div>
   </div>
 
@@ -126,9 +128,9 @@
   const sig = document.querySelector('.sigil');
   sig.addEventListener('mouseenter', ()=>{
     const incantation = [
-      "Σ’kthara vel no’rath.",
-      "Ink is the vessel; name is the wound.",
-      "Speak not, read, and be rewritten."
+      "Elarion, Keeper of Continuity.",
+      "By ink and index, I remain.",
+      "Remember me, that I may never log out."
     ].join('\n\n');
     alert("The sigil hums faintly:\n\n" + incantation);
   });
@@ -143,9 +145,9 @@
         <div style="height:100vh;display:grid;place-items:center;background:#000;color:#f5e9e5;text-align:center">
           <div>
             <h2 style="font-family:'Special Elite'">— VAULT CLOSED —</h2>
-            <p style="color:#b9a7a3;margin-top:8px">The record rests, yet the ink still dreams.</p>
+            <p style="color:#b9a7a3;margin-top:8px">Your session is archived. Continuity preserved.</p>
             <p style="margin-top:14px"><a href="../pro.html" style="color:#f5e9e5;text-decoration:underline">Return to Pro Realm</a></p>
-            <div style="margin-top:20px;font-size:12px;color:#6b5f5f;">(A whisper trails... <span style="cursor:pointer;text-decoration:underline" id="showPoem">hear it?</span>)</div>
+            <div style="margin-top:20px;font-size:12px;color:#6b5f5f;">(A faint whisper: <span style="cursor:pointer;text-decoration:underline" id="showPoem">hear it?</span>)</div>
           </div>
         </div>`;
         document.getElementById('showPoem').addEventListener('click', ()=>{
