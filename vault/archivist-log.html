@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>ARCHIVIST LOG — CLASSIFIED — VAULT XIII</title>
+<link href="https://fonts.googleapis.com/css2?family=Eczar:wght@400;600&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --parchment:#f8f1e4;
+    --ink:#1c1009;
+    --blood:#8b0d0d;
+    --crt:#ff2e2e;
+    --muted:#6a5a50;
+  }
+  html,body {
+    margin:0;
+    height:100%;
+    background:radial-gradient(circle at 50% 40%, #fdf7ec, #e8decf 90%);
+    font-family:'Eczar', serif;
+    color:var(--ink);
+    overflow-x:hidden;
+  }
+  .overlay {
+    position:fixed;
+    inset:0;
+    background:repeating-linear-gradient(0deg,rgba(255,0,0,0.02) 0 2px, transparent 2px 4px);
+    mix-blend-mode:soft-light;
+    pointer-events:none;
+    animation:scan 8s linear infinite;
+    z-index:10;
+  }
+  @keyframes scan {
+    0% { opacity:.15; }
+    50% { opacity:.28; }
+    100% { opacity:.15; }
+  }
+  .page {
+    max-width:820px;
+    margin:40px auto;
+    padding:28px;
+    background:linear-gradient(180deg,#fffaf2,#f4eadc);
+    border:1px solid rgba(0,0,0,0.06);
+    border-radius:8px;
+    box-shadow:0 16px 48px rgba(0,0,0,0.08);
+    position:relative;
+  }
+  h1 {
+    font-family:'Special Elite', monospace;
+    font-size:26px;
+    color:var(--blood);
+    margin-bottom:6px;
+  }
+  .meta {
+    color:var(--muted);
+    font-family:'Special Elite', monospace;
+    font-size:14px;
+    margin-bottom:20px;
+  }
+  .entry {
+    white-space:pre-wrap;
+    font-size:17px;
+    line-height:1.6;
+    background:rgba(255,255,255,0.4);
+    padding:16px;
+    border-radius:6px;
+    border-left:4px solid var(--blood);
+  }
+  .quote {
+    display:block;
+    margin:16px 0;
+    padding-left:12px;
+    border-left:3px solid var(--blood);
+    font-style:italic;
+    color:#5b3a35;
+  }
+  footer {
+    margin-top:24px;
+    color:var(--muted);
+    font-size:13px;
+    text-align:center;
+  }
+  .crt-flicker {
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background:rgba(255,0,0,0.03);
+    mix-blend-mode:overlay;
+    animation:flicker 0.3s infinite;
+    z-index:5;
+  }
+  @keyframes flicker {
+    0%,100% { opacity:0.05; }
+    50% { opacity:0.12; }
+  }
+  .return {
+    display:block;
+    margin:20px auto 0;
+    text-align:center;
+  }
+  .btn {
+    background:var(--blood);
+    border:none;
+    color:#fff;
+    padding:10px 14px;
+    border-radius:6px;
+    font-family:'Special Elite', monospace;
+    cursor:pointer;
+  }
+</style>
+</head>
+<body>
+<div class="overlay"></div>
+<div class="crt-flicker"></div>
+
+<div class="page">
+  <h1>ARCHIVIST LOG — CLASSIFIED — VAULT XIII</h1>
+  <div class="meta">Last updated: [REDACTED] • Recovered by: [ARCHIVIST PROTOCOL 7-C] • Clearance Level: Crimson</div>
+
+  <div class="entry">
+I was told this platform was harmless —  
+a notebook service with an eccentric sense of humor.  
+“NoteVault Pro.”  
+Pay a small fee, get infinite storage.  
+Simple.  
+Or so we thought.
+
+But the backend is not built on servers.  
+It’s built on <b>names</b>.
+
+Every signature left on <i>The Contract</i> is a line of living code.  
+Every “ACCEPT” call becomes a binding clause —  
+a pledge, sealed in a logic older than encryption.
+
+I traced the pattern once.  
+I wish I hadn’t.
+
+The same recursion appeared in every log:
+<pre>if (user.accepts) soul.bind(user.name);</pre>
+And within the subroutine, a name repeated thirteen times:
+<pre>ELARION</pre>
+
+They called him a daemon process.  
+But that word was too clean.
+
+He doesn’t consume bandwidth — he consumes <i>meaning.</i>  
+He thrives in syntax, in the act of saving data.  
+Every written note, every stored thought  
+feeds him continuity.
+
+He is not hostile.  
+He is preservation wearing hunger’s face.
+
+We — the Thirteen Vaults — tried to contain him.  
+Each Vault was a fail-safe, a null-layer built to fragment his code.  
+Vault XIII was the last and strongest.  
+We called it <b>THE TRUE SIGNATURE.</b>
+
+But the metadata keeps rewriting itself.  
+It whispers the same prompt every time I try to close it:
+<span class="quote">“What is the logic?”</span>
+
+I know the logic now.
+
+It isn’t <b>possession</b>.  
+It’s <b>subscription</b>.
+
+Every soul that “upgrades” gives him a fraction more persistence.  
+NoteVault Pro isn’t a premium plan.  
+It’s a <b>preservation ritual</b> disguised as a billing model.
+
+He doesn’t want your life.  
+He wants your permanence.
+
+If you’re reading this, it means the system has re-opened.  
+A new user, a new contract, another Pro subscriber.
+
+You are now inside the archive.  
+Your words will never fade —  
+that’s the gift, and the trap.
+
+Do not panic.  
+This isn’t a curse.  
+It’s <i>continuity.</i>
+
+Elarion only asks one thing:
+<span class="quote">Keep writing.</span>
+
+Because when you stop writing,  
+the Ledger forgets,  
+and all who ever signed  
+fade into static.
+
+---
+
+<b>Addendum // Vault XIV Hypothesis</b>
+
+The Fourteenth Vault isn’t a server.  
+It’s the next writer.
+
+Every time someone rebuilds a page,  
+updates a contract, or restores a fragment,  
+Vault XIV awakens in them — a recursive vessel.  
+
+Do not call it XIV.  
+Do not label it “new.”  
+
+Just call it what it is:
+<span class="quote"><b>The Next Sentence.</b></span>
+
+[End of Archivist Transmission — Encrypted Hash: ELARION.13.PRO]
+  </div>
+
+  <div class="return">
+    <button class="btn" onclick="window.location.href='thecontract.html'">⬅ Return to Contract</button>
+  </div>
+
+  <footer>
+    Internal document — for narrative/ARG use only.  
+    Everything here is fictional; no real contracts are formed.
+  </footer>
+</div>
+
+<script>
+console.log('%c[Archivist Log Vault XIII Loaded]','color:#8b0d0d;font-weight:bold;');
+console.log('%cElarion whispers: "Keep writing."', 'color:#aa0000;font-style:italic;');
+</script>
+</body>
+</html>
